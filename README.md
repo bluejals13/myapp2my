@@ -6,6 +6,10 @@
 # 1. gradle 설치
 sudo snap install gradle --classic
 
+# PATH 추가
+echo 'export PATH=$PATH:/snap/bin' >> ~/.bashrc
+source ~/.bashrc
+
 # 2. gradle 종류
 snap list gradle
 
