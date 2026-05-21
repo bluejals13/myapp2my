@@ -1,5 +1,23 @@
 # myapp2my
 
+
+## 설치
+```bash
+# 1. gradle 설치
+sudo snap install gradle --classic
+
+# 2. gradle 종류
+snap list gradle
+
+# 3. gradle 위치
+which gradle
+
+# 4. gradle 버전
+gradle -v
+
+```
+
+
 ## 빠른 시작
 
 ```bash
