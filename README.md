@@ -15,6 +15,35 @@ which gradle
 # 4. gradle 버전
 gradle -v
 
+
+
+# 5. 자바 설치 17
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+# 6. 자바 위치
+readlink -f $(which java)
+
+# 7. 환경변수 기입
+echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> ~/.bashrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# 8. 버전 확인
+echo $JAVA_HOME
+java -version
+
+
+
+
+# 9. 노드 설치 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# 10. 프론트 에서 vite 템플릿 리액트
+cd frontend
+npm create vite@latest . -- --template react
+
 ```
 
 
