@@ -48,6 +48,12 @@ sudo apt install -y nodejs
 cd frontend
 npm create vite@latest . -- --template react
 
+# 11. 노드 버전 과 위치
+node -v
+npm -v
+which node
+which npm
+
 ```
 
 
