@@ -1,58 +1,155 @@
-# myapp2my
 
 
-## 설치
-```bash
-#inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ ls ~/.ssh
-authorized_keys
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ ssh-keygen -t ed25519 -C "bluejck10113@gmail.com"
-Generating public/private ed25519 key pair.
-Enter file in which to save the key (/home/inchan/.ssh/id_ed25519): 
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
-Your identification has been saved in /home/inchan/.ssh/id_ed25519
-Your public key has been saved in /home/inchan/.ssh/id_ed25519.pub
-The key fingerprint is:
-SHA256:9nucCIvbTiXZYLWQSy7Vt5IiCxoDesH5EgKxeeuoTck bluejck10113@gmail.com
-The key's randomart image is:
-+--[ED25519 256]--+
-|+o .    .o.      |
-|oo=     +o...    |
-|+o.+   +o..o .   |
-|..=.o o.++o .    |
-| ..= . +S.o.     |
-| +..  ...+       |
-|. E    ..o.o .   |
-|.o    .o. ..+    |
-|. .   .oo ..     |
-+----[SHA256]-----+
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ cat ~/.ssh/id_ed25519.pub
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFUQqdVD02Pq4mbGDHv1lrLDs70MlU7EijiSqjTEdWvo bluejck10113@gmail.com
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ git remote set-url origin git@github.com:bluejals13/myapp2my.git
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ git remote -v
-origin	git@github.com:bluejals13/myapp2my.git (fetch)
-origin	git@github.com:bluejals13/myapp2my.git (push)
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ ssh -T git@github.com
-The authenticity of host 'github.com (20.200.245.247)' can't be established.
-ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
-This key is not known by any other names.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
-Hi bluejals13! You've successfully authenticated, but GitHub does not provide shell access.
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ git push origin main
-오브젝트 나열하는 중: 6026, 완료.
-오브젝트 개수 세는 중: 100% (6026/6026), 완료.
-Delta compression using up to 24 threads
-오브젝트 압축하는 중: 100% (5905/5905), 완료.
-오브젝트 쓰는 중: 100% (6022/6022), 77.49 MiB | 4.67 MiB/s, 완료.
-Total 6022 (delta 1393), reused 18 (delta 1), pack-reused 0
-remote: Resolving deltas: 100% (1393/1393), completed with 3 local objects.
-remote: warning: See https://gh.io/lfs for more information.
-remote: warning: File CI-CDpart/backend/build/libs/backend-0.0.1-SNAPSHOT.jar is 56.40 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
-remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
-ls -aTo github.com:bluejals13/myapp2my.git
-   b70a7b1..dfca910  main -> main
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ ls -a
-.  ..  .git  .github  CI-CDpart  README.md
-inchan@inchan-B650-Steel-Legend-WiFi:~/바탕화면/MLOps-2/myapp2my$ 
+# ✔ 1. Git 면접 고득점 답변 템플릿 (그대로 써도 됨)
+
+## ✔ 기본 답변 (중요)
+
+> “저는 Git을 단순 버전 저장이 아니라 협업 흐름 관리 도구로 이해하고 있습니다.
+> feature 브랜치를 기준으로 작업하고, WIP 커밋으로 진행 상태를 관리한 뒤 PR을 생성합니다.
+> PR 단계에서 CI 테스트와 코드 리뷰를 거치고, 문제 발생 시 revert를 사용해 안전하게 롤백합니다.
+> 히스토리를 유지하는 것을 중요하게 생각하기 때문에 reset보다는 revert를 우선적으로 사용합니다.”
+
+
+## ✔ 한 단계 높은 답변 (좋은 평가용)
+
+> “작업은 feature 단위로 브랜치를 분리하고, PR 기반으로 main에 merge합니다.
+> CI/CD를 통해 자동 테스트를 수행하고, 충돌은 로컬에서 해결 후 push합니다.
+> 히스토리 안정성을 위해 reset보다는 revert를 기본으로 사용하며, 필요 시 reflog로 복구합니다.”
+
+
+## ✔ 포인트
+
+면접관이 보는 핵심:
+
+* ❌ Git 명령어 암기
+* ✔ 협업 구조 이해
+* ✔ 안전한 개발 사고
+* ✔ PR 기반 흐름 이해
+
+
+# ✔ 2. 실무 Git 선택 기준 (핵심 표)
+
+## ✔ “언제 무엇을 써야 하는가”
+
+| 상황            | 선택                     | 이유             |
+| ------------- | ---------------------- | -------------- |
+| 파일 수정 취소      | `git restore`          | 가장 안전 (로컬만 영향) |
+| staging 취소    | `git restore --staged` | commit 영향 없음   |
+| 로컬 커밋 되돌리기    | `git reset --soft`     | 히스토리 유지        |
+| push 전 커밋 삭제  | `git reset --hard`     | 로컬만 영향         |
+| push된 커밋 되돌리기 | `git revert`           | 협업 안전          |
+| 실수 복구         | `git reflog`           | 최후 복구 수단       |
+| 작업 임시 보관      | `git stash`            | 브랜치 이동용        |
+
+
+
+# ✔ 3. 규모별 Git 전략 (실무 핵심)
+
+## ✔ ① 개인 프로젝트
+
+| 항목       | 방식                       |
+| -------- | ------------------------ |
+| 브랜치      | main + feature(optional) |
+| merge    | 직접 merge or GitHub       |
+| reset 사용 | 가능                       |
+| revert   | 거의 안 씀                   |
+
+자유도 높음
+
+
+
+## ✔ ② 소규모 팀 (2~5명)
+
+| 항목     | 방식             |
+| ------ | -------------- |
+| 브랜치    | feature / main |
+| merge  | PR 권장          |
+| CI     | 간단 테스트         |
+| revert | 자주 사용          |
+
+PR + 기본 협업
+
+
+
+## ✔ ③ 일반 실무 (회사 표준)
+
+| 항목     | 방식                       |
+| ------ | ------------------------ |
+| 브랜치    | feature / develop / main |
+| merge  | PR 필수                    |
+| CI/CD  | 자동 테스트 + 배포              |
+| revert | 표준 롤백 방식                 |
+| reset  | 거의 금지                    |
+
+안정성 + 히스토리 유지
+
+
+
+## ✔ ④ 대규모 서비스 (MSA / SaaS)
+
+| 항목       | 방식                         |
+| -------- | -------------------------- |
+| 브랜치      | feature + release + hotfix |
+| merge    | PR + 승인 필수                 |
+| CI/CD    | 필수 + 자동 배포                 |
+| revert   | 운영 필수                      |
+| rollback | 배포 버전 단위                   |
+
+안정성 최우선
+
+
+
+# ✔ 4. 실무 사고 방식 (중요)
+
+## ✔ Git 선택 기준
+
+```text
+안전성 > 히스토리 유지 > 속도 > 편의성
 ```
+
+
+
+## ✔ 절대 원칙
+
+* reset = 개인용
+* revert = 팀용
+* PR = 표준
+* main = 건드리면 위험
+
+
+
+# ✔ 5. 면접에서 자주 나오는 질문 + 답변
+
+## Q1. reset vs revert 차이?
+
+> reset은 히스토리를 변경하고, revert는 히스토리를 유지하면서 되돌리는 커밋을 추가합니다. 협업 환경에서는 revert를 사용합니다.
+
+
+
+## Q2. merge conflict 해결 방법?
+
+> 로컬에서 충돌 파일을 수정하고 add 후 commit 또는 merge --continue로 해결합니다. 이후 PR을 다시 push합니다.
+
+
+
+## Q3. 실수했을 때 복구 방법?
+
+> 상황에 따라 restore, reset, revert를 사용하고, 최후에는 reflog로 복구합니다.
+
+
+
+
+## ✔ Git 역할 분리
+
+| 개념     | 역할       |
+| ------ | -------- |
+| commit | 기록       |
+| branch | 작업 단위    |
+| merge  | 통합       |
+| revert | 안전 롤백    |
+| reset  | 로컬 되감기   |
+| PR     | 협업 검수    |
+| CI/CD  | 자동 검사/배포 |
+
+
+
