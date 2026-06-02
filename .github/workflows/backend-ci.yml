@@ -22,9 +22,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-
+          
+      # 3. gradlew 권한
       - name: Grant Permission
         run: chmod +x gradlew
-
+        
+      # 4. 빌드
       - name: Build
         run: ./gradlew build
+
+      # 5. 테스트
+      - name: Run tests
+        run: ./gradlew test
