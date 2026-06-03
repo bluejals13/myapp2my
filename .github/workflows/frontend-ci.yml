@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: CI-CDpart/frontend
 
     steps:
       # 1. 코드 가져오기
