@@ -4,6 +4,7 @@ import type { LoginResponse } from "./auth.response";
 
 type AuthContextType = {
   token: string | null;
+  username: string | null;
   isLoggedIn: boolean;
   login: (data: LoginResponse) => void;
   logout: () => void;
