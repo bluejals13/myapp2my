@@ -46,42 +46,44 @@ export default function Signup() {
     }
   };
 
-  return (
-    <div className="signup-container">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSignup();
-        }}
-      >
+return (
+  <div className="login-container">
+    <form
+      className="login-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSignup();
+      }}
+    >
       <h2>회원가입</h2>
 
       <div className="form-group">
         <label>아이디</label>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
 
-        <div className="form-group">
-          <label>비밀번호</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+      <div className="form-group">
+        <label>비밀번호</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
 
-        {/* ✅ 빨간 에러 메시지 영역 */}
-        {errorMessage && (
-          <p className="error-message">{errorMessage}</p>
-        )}
+      {errorMessage && (
+        <p className="error-message">{errorMessage}</p>
+      )}
+      <p className="switch-auth">
+        이미 계정이 있나요? <a href="/login">로그인</a>
+      </p>
 
-        <button disabled={isLoading}>
-          {isLoading ? "가입 중..." : "회원가입"}
-        </button>
-      </form>
-    </div>
-  );
-}
+      <button disabled={isLoading}>
+        {isLoading ? "가입 중..." : "회원가입"}
+      </button>
+    </form>
+  </div>
+);
