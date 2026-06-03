@@ -13,6 +13,8 @@ export default function Signup() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleSignup = async () => {
     const result = signupSchema.safeParse({ username, password });
 
