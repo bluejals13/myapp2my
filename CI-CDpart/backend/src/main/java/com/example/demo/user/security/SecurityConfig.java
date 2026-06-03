@@ -66,9 +66,13 @@ public class SecurityConfig {
                     UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
             .authenticationEntryPoint((req, res, e) -> {
-            res.setStatus(401);
+                e.printStackTrace();
+                res.setStatus(401);
             })
-            )
+            .accessDeniedHandler((req, res, e) -> {
+                e.printStackTrace();
+                res.setStatus(403);
+            })
             .build();
     }
 
