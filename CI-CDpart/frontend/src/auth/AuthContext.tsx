@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isLoggedIn = !!token;
 
-  // 🔥 /me 호출
+  // /me 호출
   const refreshUser = async () => {
     if (!token) return;
 
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 🔥 login
+  // login
   const login = async (newToken: string) => {
     setToken(newToken);
     authStorage.set(newToken);
@@ -49,14 +49,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await refreshUser();
   };
 
-  // 🔥 logout
+  // logout
   const logout = () => {
     setToken(null);
     setUser(null);
     authStorage.clear();
   };
 
-  // 🔥 앱 시작 시 자동 user 복구
+  // 앱 시작 시 자동 user 복구
   useEffect(() => {
     if (token) {
       refreshUser();
