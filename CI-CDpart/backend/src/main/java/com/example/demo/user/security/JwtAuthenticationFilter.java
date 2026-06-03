@@ -36,18 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String header = request.getHeader("Authorization");
+      
+        // 선 실행 토큰 생성 / 등록
+        try {
+            String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-      
-        // 선 실행 토큰 생성 / 등록
-        try {
-            String token = resolveToken(request);
+        String token = header.substring(7);
 
         if (token != null && jwtProvider.validateToken(token)) {
 
