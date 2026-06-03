@@ -3,7 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isLoggedIn, username, logout } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth();
 
   return (
     <header style={{ padding: 12, borderBottom: "1px solid #ddd" }}>
