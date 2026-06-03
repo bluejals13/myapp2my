@@ -21,7 +21,7 @@ export default function Header() {
             <Link to="/dashboard">Dashboard</Link>
 
             <span style={{ marginLeft: "auto" }}>
-              {username}님
+              {user?.username}님
             </span>
 
             <button
