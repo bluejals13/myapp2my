@@ -1,89 +1,112 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api";
-import { validateLogin } from "../utils/validateAuth";
-import { useAuth } from "../components/AuthContext";
+
+import { loginSchema  } from "../auth/auth.schema";
+import { useAuth } from "../auth/AuthContext";
+import {
+  loginResponseSchema,
+  type LoginResponse,
+} from "../auth/auth.response";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleLogin = async () => {
-    const error = validateLogin(username, password);
+    const result = loginSchema.safeParse({
+      username,
+      password,
+    });
 
-    if (error) {
-      setErrorMessage(error);
-      return;
-    }
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
 
-    try {
-      setErrorMessage("");
+      setErrorMessage(
+        errors.username?.[0] ??
+        errors.password?.[0] ??
+        "입력값 오류"
+      );
 
-      const res = await apiFetch("/api/auth/login", {
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    const data = await apiFetch<LoginResponse>(
+      "/api/auth/login",
+      loginResponseSchema,
+      {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        setErrorMessage(data?.message || "로그인에 실패했습니다.");
-        return;
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(result.data),
       }
+    );
 
-      const token = await res.text();
-
-      // 🔥 핵심: AuthContext 통해서만 상태 관리
-      login(token, username);
-
-      navigate("/main");
-    } catch (err) {
-      console.error(err);
-      setErrorMessage("서버 오류가 발생했습니다.");
-    }
-  };
+    login(data);
+    navigate("/main");
+  } catch {
+    setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
+  } finally {
+  setIsLoading(false);
+  }
+};
 
   return (
-    <div>
-      <h2>로그인</h2>
-
+    <div className="login-container">
       <form
+        className="login-form"
         onSubmit={(e) => {
-          e.preventDefault();
-          handleLogin();
+        e.preventDefault();
+        handleLogin();
         }}
       >
+      <h2>로그인</h2>
+      
+      <div className="form-group">
+        <label htmlFor="username">아이디</label>
         <input
+          id="username"
           type="text"
-          placeholder="아이디"
+          placeholder="아이디를 입력하세요"
           value={username}
+          autoComplete="username"
           onChange={(e) => setUsername(e.target.value)}
         />
+      </div>
 
-        <br />
-
+      <div className="form-group">
+        <label htmlFor="password">비밀번호</label>
         <input
+          id="password"
           type="password"
-          placeholder="비밀번호"
+          placeholder="비밀번호를 입력하세요"
           value={password}
+          autoComplete="current-password"
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        <br />
+      </div>
 
         {errorMessage && (
-          <div style={{ color: "#ff6b6b", marginBottom: "10px" }}>
+          <p className="error-message">
             {errorMessage}
-          </div>
+          </p>
         )}
-
-        <button type="submit">로그인</button>
+        
+        <button
+          type="submit"
+          disabled={isLoading || !username || !password}
+          >{isLoading ? "로그인 중..." : "로그인"}
+        </button>
       </form>
     </div>
   );
