@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 import { loginSchema } from "../auth/auth.schema";
 import { loginResponseSchema, type LoginResponse } from "../auth/auth.response";
 
-import "./Login.css";
+import "./Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -60,9 +60,9 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container">
+    <div className="auth-container">
       <form
-        className="login-form"
+        className="auth-form"
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin();
