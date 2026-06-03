@@ -8,8 +8,10 @@ export const authBaseSchema = z.object({
   password: z.string().trim().min(3, "비밀번호는 3자 이상"),
 });
 
+// login은 그대로
 export const loginSchema = authBaseSchema;
-export const signupSchema = authBaseSchema;
 
-export type LoginInput = z.infer<typeof loginSchema>;
-export type SignupInput = z.infer<typeof signupSchema>;
+// signup만 확장
+export const signupSchema = authBaseSchema.extend({
+  email: z.string().email("이메일 형식이 아닙니다"),
+});
