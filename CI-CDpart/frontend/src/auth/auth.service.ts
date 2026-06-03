@@ -1,5 +1,3 @@
-// auth.service.ts
-
 const TOKEN_KEY = "token";
 const USER_KEY = "username";
 
