@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { apiFetch } from "../api";
 import { authStorage } from "./auth.service";
-import type { LoginResponse } from "./auth.response";
 
 export type User = {
   id: number;
