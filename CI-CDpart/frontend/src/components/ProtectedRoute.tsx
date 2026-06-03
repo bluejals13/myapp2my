@@ -2,10 +2,8 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 export default function ProtectedRoute() {
-  const { isLoggedIn, loading } = useAuth();
+  const { isLoggedIn } = useAuth();
   const location = useLocation();
-
-  if (loading) return null;
 
   if (!isLoggedIn) {
     return (
