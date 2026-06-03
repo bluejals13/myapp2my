@@ -9,6 +9,8 @@ import {
   type LoginResponse,
 } from "../auth/auth.response";
 
+import "./Login.css";
+
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
