@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const login = (data: LoginResponse) => {
-    setToken(data.token);
+    setToken(data.accessToken);
     setUsername(data.username);
     authStorage.set(data.token, data.username);
   };
