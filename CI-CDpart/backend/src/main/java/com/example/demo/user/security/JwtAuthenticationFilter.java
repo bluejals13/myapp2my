@@ -39,7 +39,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       
         // 선 실행 토큰 생성 / 등록
         try {
+            System.out.println("JWT FILTER START"); //
+            
             String header = request.getHeader("Authorization");
+            
+            System.out.println("HEADER = " + header); //
 
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -47,6 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
+
+        System.out.println("VALID = " + jwtProvider.validateToken(token)); //
 
         if (token != null && jwtProvider.validateToken(token)) {
 
@@ -60,6 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_USER"))
                     );
+
+            System.out.println("USER ID = " + userId); //
 
             SecurityContextHolder.getContext().setAuthentication(auth);
            }
