@@ -73,6 +73,7 @@ public class SecurityConfig {
                 e.printStackTrace();
                 res.setStatus(403);
             })
+            )
             .build();
     }
 
