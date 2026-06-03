@@ -47,26 +47,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       
         // 선 실행 토큰 생성 / 등록
         try {
-            String token = header.substring(7);
+            String token = resolveToken(request);
+
+        if (token != null && jwtProvider.validateToken(token)) {
+
             Long userId = jwtProvider.getUserId(token);
 
             CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
             UsernamePasswordAuthenticationToken auth =
-            new UsernamePasswordAuthenticationToken(
-                principal,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                );
+                    new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+           }
 
            } catch (Exception e) {
-                SecurityContextHolder.clearContext();
 
+            SecurityContextHolder.clearContext();
                 // 🔥 선택: 완전 차단하려면 아래 활성화
-                // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                // return;
+                //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                //return;
         }
 
         filterChain.doFilter(request, response);
