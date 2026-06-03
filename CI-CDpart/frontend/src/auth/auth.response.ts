@@ -1,4 +1,4 @@
-// authresponse.ts
+// auth.response.ts
 
 import { z } from "zod";
 
