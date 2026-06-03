@@ -17,7 +17,11 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    const result = signupSchema.safeParse({ username, password });
+    const result = signupSchema.safeParse({
+      username,
+      password,
+      email,
+    });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
