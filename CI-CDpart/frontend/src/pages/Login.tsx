@@ -40,16 +40,9 @@ export default function Login() {
       setIsLoading(true);
       setErrorMessage("");
 
-      const data = await apiFetch<LoginResponse>(
-        "/api/auth/login",
-        loginResponseSchema,
-        {
-          method: "POST",
-          body: JSON.stringify(result.data),
-        }
-      );
+      const data = await apiFetch<LoginResponse>("/api/auth/login");
 
-      login(data);
+      await login(data.accessToken);
       navigate("/main");
     } catch {
       setErrorMessage("로그인 실패");
