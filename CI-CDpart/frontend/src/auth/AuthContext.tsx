@@ -17,15 +17,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authStorage.getToken()
   );
 
-  const [username, setUsername] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(() =>
+    authStorage.getUsername()
+  );
 
   const login = (data: LoginResponse) => {
     setToken(data.accessToken);
-    setUsername(data.username ?? null);
+    authStorage.set(data.accessToken);
+
+    const payload = decodeToken(data.accessToken);
+    setUsername(payload?.username ?? null);
   };
 
   const logout = () => {
     setToken(null);
+    setUsername(null);
     authStorage.clear();
   };
 
