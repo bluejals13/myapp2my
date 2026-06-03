@@ -4,6 +4,7 @@ import { apiFetch } from "../api";
 
 import { loginSchema  } from "../auth/auth.schema";
 import { useAuth } from "../auth/AuthContext";
+
 import {
   loginResponseSchema,
   type LoginResponse,
@@ -22,47 +23,40 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    const result = loginSchema.safeParse({
-      username,
-      password,
-    });
+      const result = loginSchema.safeParse({ username, password });
 
-    if (!result.success) {
-      const errors = result.error.flatten().fieldErrors;
+      if (!result.success) {
+        const errors = result.error.flatten().fieldErrors;
 
-      setErrorMessage(
-        errors.username?.[0] ??
-        errors.password?.[0] ??
-        "입력값 오류"
+        setErrorMessage(
+          errors.username?.[0] ??
+          errors.password?.[0] ??
+          "입력값 오류"
+        );
+        return;
+      }
+
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      const data = await apiFetch<LoginResponse>(
+        "/api/auth/login",
+        loginResponseSchema,
+        {
+          method: "POST",
+          body: JSON.stringify(result.data),
+        }
       );
 
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-    setErrorMessage("");
-
-    const data = await apiFetch<LoginResponse>(
-      "/api/auth/login",
-      loginResponseSchema,
-      {
-        method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(result.data),
-      }
-    );
-
-    login(data);
-    navigate("/main");
-  } catch {
-    setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
-  } finally {
-  setIsLoading(false);
-  }
-};
+      login(data);
+      navigate("/main");
+    } catch {
+      setErrorMessage("로그인 실패");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="login-container">
