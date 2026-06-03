@@ -1,22 +1,21 @@
-/* Login.css */
+/* Auth.css */
 
-.login-container {
+.auth-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #111827; /* 어두운 배경 */
+  background: #111827;
   padding: 20px;
 }
 
-.login-form {
+.auth-form {
   width: 100%;
   max-width: 400px;
   padding: 32px;
 
-  background: #1f2937; /* 카드 */
+  background: #1f2937;
   border-radius: 16px;
-
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 
   display: flex;
@@ -26,7 +25,7 @@
   color: #f3f4f6;
 }
 
-.login-form h2 {
+.auth-form h2 {
   text-align: center;
   margin: 0;
   color: #ffffff;
@@ -54,6 +53,8 @@
   border: 1px solid #4b5563;
   border-radius: 10px;
   font-size: 14px;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-group input::placeholder {
@@ -63,6 +64,7 @@
 .form-group input:focus {
   outline: none;
   border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .error-message {
@@ -71,7 +73,7 @@
   margin: 0;
 }
 
-.login-form button {
+.auth-form button {
   height: 48px;
   border: none;
   border-radius: 10px;
@@ -83,14 +85,18 @@
   font-weight: 600;
   cursor: pointer;
 
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
-.login-form button:hover {
+.auth-form button:hover {
   background: #6366f1;
 }
 
-.login-form button:disabled {
+.auth-form button:active {
+  transform: scale(0.98);
+}
+
+.auth-form button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
