@@ -31,7 +31,13 @@ export async function apiFetch<T>(
   const data = await res.json();
 
   if (schema) {
-    return schema.parse(data);
+  const result = schema.safeParse(data);
+
+    if (!result.success) {
+      console.error("Zod Error:", result.error.flatten());
+      throw new Error("Response schema mismatch");
+    }
+    return result.data;
   }
 
   return data as T;
