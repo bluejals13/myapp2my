@@ -2,12 +2,19 @@ import { createContext, useContext, useState } from "react";
 import { authStorage } from "./auth.service";
 import type { LoginResponse } from "./auth.response";
 
+export type User = {
+  id: number;
+  username: string;
+};
+
 type AuthContextType = {
   token: string | null;
-  username: string | null;
+  user: User | null;
   isLoggedIn: boolean;
-  login: (data: LoginResponse) => void;
+
+  login: (token: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,32 +24,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authStorage.getToken()
   );
 
-  const [username, setUsername] = useState<string | null>(() =>
-    authStorage.getUsername()
-  );
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = (data: LoginResponse) => {
-    setToken(data.accessToken);
-    authStorage.set(data.accessToken);
+  const isLoggedIn = !!token;
 
-    const payload = decodeToken(data.accessToken);
-    setUsername(payload?.username ?? null);
+  // 🔥 /me 호출
+  const refreshUser = async () => {
+    if (!token) return;
+
+    try {
+      const data = await apiFetch<User>("/api/users/me");
+      setUser(data);
+    } catch {
+      setUser(null);
+    }
   };
 
+  // 🔥 login
+  const login = async (newToken: string) => {
+    setToken(newToken);
+    authStorage.set(newToken);
+
+    await refreshUser();
+  };
+
+  // 🔥 logout
   const logout = () => {
     setToken(null);
-    setUsername(null);
+    setUser(null);
     authStorage.clear();
   };
+
+  // 🔥 앱 시작 시 자동 user 복구
+  useEffect(() => {
+    if (token) {
+      refreshUser();
+    }
+  }, [token]);
 
   return (
     <AuthContext.Provider
       value={{
         token,
-        username,
-        isLoggedIn: !!token,
+        user,
+        isLoggedIn,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}
