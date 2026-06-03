@@ -6,7 +6,6 @@ ex.env
 # 빌드 산출물
 backend/build/
 
-*.jar
 *.war
 *.class
 
