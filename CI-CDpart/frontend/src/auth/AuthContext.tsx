@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const data = await apiFetch<User>("/api/users/me");
-      console.log(data);
+      // console.log(data);
       setUser(data);
     } catch {
       setUser(null);
