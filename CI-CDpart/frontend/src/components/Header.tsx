@@ -1,26 +1,28 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../components/AuthContext";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { token, username, logout } = useAuth();
+  const { isLoggedIn, username, logout } = useAuth();
 
   return (
     <header style={{ padding: 12, borderBottom: "1px solid #ddd" }}>
-      <nav style={{ display: "flex", gap: 12 }}>
+      <nav style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Link to="/main">Main</Link>
         <Link to="/home">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
 
-        {!token && <Link to="/signup">Signup</Link>}
+        {!isLoggedIn && <Link to="/signup">Signup</Link>}
 
-        {token ? (
+        {isLoggedIn ? (
           <>
             <Link to="/monitor">Monitor</Link>
             <Link to="/dashboard">Dashboard</Link>
 
-            <span style={{ marginLeft: "auto" }}>{username}님</span>
+            <span style={{ marginLeft: "auto" }}>
+              {username}님
+            </span>
 
             <button
               onClick={() => {
