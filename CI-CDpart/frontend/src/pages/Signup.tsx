@@ -10,6 +10,7 @@ import "./Auth.css";
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -74,6 +75,14 @@ export default function Signup() {
           />
         </div>
 
+        <div className="form-group">
+          <label>이메일</label>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        
         {errorMessage && (
           <p className="error-message">{errorMessage}</p>
         )}
