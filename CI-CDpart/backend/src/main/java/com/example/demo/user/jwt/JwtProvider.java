@@ -59,7 +59,7 @@ public class JwtProvider {
     }
 
     // 4. 중복 등 예외처리 시 검증
-    public boolean validate(String token) {
+    public boolean validateToken(String token) {
         try {
             parseClaims(token);
             return true;

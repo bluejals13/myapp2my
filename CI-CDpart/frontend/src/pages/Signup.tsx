@@ -1,111 +1,102 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import { apiFetch } from "../api";
-import { validateSignup } from "../utils/validateAuth";
+import { signupSchema } from "../auth/auth.schema";
+
+import "./Auth.css";
+// import styles from "./Login.module.css";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    const error = validateSignup(username, password);
+    const result = signupSchema.safeParse({
+      username,
+      password,
+      email,
+    });
 
-    if (error) {
-      setErrorMessage(error);
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+
+      setErrorMessage(
+        errors.username?.[0] ??
+        errors.password?.[0] ??
+        "입력값 오류"
+      );
       return;
     }
 
     try {
-      setLoading(true);
-      setErrorMessage(""); // 기존 에러 초기화
+      setIsLoading(true);
+      setErrorMessage("");
 
-      const res = await apiFetch("/api/auth/signup", {
+      await apiFetch("/api/auth/signup", undefined, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(result.data),
       });
 
-      let data = null;
-
-      try {
-        data = await res.json();
-      } catch {
-        data = null;
-      }
-
-      if (!res.ok) {
-        setErrorMessage(data?.message || "회원가입 실패");
-        return;
-      }
-
-      // 성공은 메시지 없이 이동 (원하면 success state 따로 가능)
       navigate("/login");
-    } catch (err) {
-      console.error(err);
- 	  	 setErrorMessage("서버 오류 발생");
+    } catch {
+      setErrorMessage("회원가입 실패");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSignup();
-  };
-
   return (
-    <div>
-      <h2>회원가입</h2>
+    <div className="auth-container">
+      <form
+        className="auth-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSignup();
+        }}
+      >
+        <h2>회원가입</h2>
 
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          placeholder="아이디"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        <div className="form-group">
+          <label>아이디</label>
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
 
-        <br />
+        <div className="form-group">
+          <label>비밀번호</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <br />
-
-        {/* ✅ 빨간 에러 메시지 영역 */}
+        <div className="form-group">
+          <label>이메일</label>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        
         {errorMessage && (
-          <div style={{ color: "#ff6b6b", marginBottom: "10px" }}>
-            {errorMessage}
-          </div>
+          <p className="error-message">{errorMessage}</p>
         )}
+        <p className="switch-auth">
+          이미 계정이 있나요? <a href="/login">로그인</a>
+        </p>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: loading ? "#ccc" : "#4caf50",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
-        >
-          {loading ? "가입 중..." : "회원가입"}
+        <button disabled={isLoading}>
+          {isLoading ? "가입 중..." : "회원가입"}
         </button>
-
-	<h4>아이디 2글자 이상, 비밀번호 3자 이상</h4>
       </form>
     </div>
   );
