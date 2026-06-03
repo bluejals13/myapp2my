@@ -4,7 +4,6 @@ import type { LoginResponse } from "./auth.response";
 
 type AuthContextType = {
   token: string | null;
-  username: string | null;
   isLoggedIn: boolean;
   login: (data: LoginResponse) => void;
   logout: () => void;
@@ -17,19 +16,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authStorage.getToken()
   );
 
-  const [username, setUsername] = useState<string | null>(() =>
-    authStorage.getUsername()
-  );
-
   const login = (data: LoginResponse) => {
     setToken(data.accessToken);
-    setUsername(data.username);
-    authStorage.set(data.token, data.username);
+    authStorage.set(data.accessToken);
   };
 
   const logout = () => {
     setToken(null);
-    setUsername(null);
     authStorage.clear();
   };
 
