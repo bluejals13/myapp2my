@@ -31,7 +31,7 @@ public class UserController {
     public UserResponse getMe(
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
-        System.out.println("PRINCIPAL = " + principal);
+        //System.out.println("PRINCIPAL = " + principal);
         return userService.getMe(principal.getUserId());
     }
 
