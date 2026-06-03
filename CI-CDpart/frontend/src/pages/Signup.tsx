@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../api";
 
-import { authBaseSchema } from "../auth/auth.schema";
+import { apiFetch } from "../api";
+import { signupSchema } from "../auth/auth.schema";
+
+import "./Login.css";
+// import styles from "./Login.module.css";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -11,10 +14,7 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
-    const result = authBaseSchema.safeParse({
-      username,
-      password,
-    });
+    const result = signupSchema.safeParse({ username, password });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -24,24 +24,17 @@ export default function Signup() {
         errors.password?.[0] ??
         "입력값 오류"
       );
-
       return;
     }
 
     try {
-      setLoading(true);
-      setErrorMessage(""); // 기존 에러 초기화
+      setIsLoading(true);
+      setErrorMessage("");
 
-      const res = await apiFetch("/api/auth/signup", 
-        undefined,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(result.data),
-        }
-      );
+      await apiFetch("/api/auth/signup", undefined, {
+        method: "POST",
+        body: JSON.stringify(result.data),
+      });
 
       navigate("/login");
     } catch {
