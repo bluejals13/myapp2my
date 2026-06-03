@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { apiFetch } from "../api";
 import { signupSchema } from "../auth/auth.schema";
