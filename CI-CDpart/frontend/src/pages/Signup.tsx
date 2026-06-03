@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api";
 
-import { validateSignup } from "../auth/auth.schema";
+import { loginSchema } from "../auth/auth.schema";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
