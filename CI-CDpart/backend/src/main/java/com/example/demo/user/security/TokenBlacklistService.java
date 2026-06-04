@@ -13,9 +13,11 @@ import com.example.demo.user.jwt.JwtProvider;
 public class TokenBlacklistService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final JwtProvider jwtProvider;
 
     // 🔥 blacklist 등록
     public void blacklist(String jti) {
+        String jti = jwtProvider.getJti(token);
         redisTemplate.opsForValue().set(
                 "blacklist:" + jti,
                 "true",
