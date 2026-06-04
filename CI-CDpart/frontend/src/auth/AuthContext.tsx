@@ -1,6 +1,13 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+// AuthContext.tsx
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import { apiFetch } from "../api";
-import { authStorage } from "./auth.service";
+import { authStorage } from "./auth.storage";
 
 export type User = {
   id: number;
@@ -11,58 +18,52 @@ type AuthContextType = {
   token: string | null;
   user: User | null;
   isLoggedIn: boolean;
-  isLoading: boolean;
 
-  login: (token: string) => Promise<void>;
+  login: (token: string) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }) {
-  const [token, setToken] = useState(authStorage.get());
-  const [user, setUser] = useState(null);
-
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [token, setToken] = useState<string | null>(authStorage.get());
+  const [user, setUser] = useState<User | null>(null);
 
   const isLoggedIn = !!token;
 
-  // ✅ /me 호출 (중복 방지 + 안정화)
   const refreshUser = async () => {
-    const data = await apiFetch("/api/users/me");
+    if (!authStorage.get()) return;
 
-        setUser(data);
-      } catch (err) {
-      console.error("refreshUser failed:", err);
+    try {
+      const data = await apiFetch<User>("/api/users/me");
       setUser(data);
+    } catch {
+      setUser(null);
     }
-  }
+  };
 
-  // ✅ login 문제 없음
   const login = (newToken: string) => {
     authStorage.set(newToken);
     setToken(newToken);
   };
 
-  // ✅ logout
   const logout = () => {
     authStorage.clear();
     setToken(null);
     setUser(null);
   };
 
-  // ✅ 앱 최초 로딩 시 1회만 user 복구
   useEffect(() => {
-    const init = async () => {
-      if (authStorage.getToken()) {
-        await refreshUser();
-      }
-      setIsLoading(false);
-    };
+    if (token) refreshUser();
+  }, [token]);
 
-    init();
-  }, [refreshUser]);
+  useEffect(() => {
+    const handler = () => logout();
+
+    window.addEventListener("auth:logout", handler);
+    return () => window.removeEventListener("auth:logout", handler);
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -70,7 +71,6 @@ export function AuthProvider({ children }) {
         token,
         user,
         isLoggedIn,
-        isLoading,
         login,
         logout,
         refreshUser,
