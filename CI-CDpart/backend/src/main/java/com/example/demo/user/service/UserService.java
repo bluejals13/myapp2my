@@ -60,8 +60,10 @@ public class UserService {
         // 리프레시 와 redis 연결 가
         
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
+        
+        redisTemplate.delete("refresh:" + user.getId()); // 기존 세션 제거 (명확하게)
 
-        redisTemplate.opsForValue().set(
+        redisTemplate.opsForValue().set( // 새 세션 저장
             "refresh:" + user.getId(),
             refreshToken,
             Duration.ofDays(7)
