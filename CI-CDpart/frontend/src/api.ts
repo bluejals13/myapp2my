@@ -25,10 +25,24 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
-      if (res.status === 401) {
-        localStorage.removeItem("token");
-        window.dispatchEvent(new Event("auth:logout"));
-        }
+  const errorBody = await res.json().catch(() => null);
+
+  // 1. 세션 끊김 (다른 기기 로그인)
+  if (res.status === 401 && errorBody?.code === "SESSION_INVALID") {
+      authStorage.clear();
+      window.dispatchEvent(new Event("auth:logout"));
+      throw new Error("SESSION_INVALID");
+      }
+
+      // 2. 토큰 만료 → refresh 시도
+  if (res.status === 401 && errorBody?.code === "TOKEN_EXPIRED") {
+      const newToken = await refreshToken();
+
+      authStorage.set(newToken);
+
+      // retry logic (중요)
+      return apiFetch(url, schema, options);
+      }
       throw new Error("API Error");
     }
 
