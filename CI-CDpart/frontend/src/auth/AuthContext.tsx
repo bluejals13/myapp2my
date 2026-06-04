@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // ✅ login
+  // ✅ login 문제 없음
   const login = async (newToken: string) => {
     authStorage.set(newToken);
     setToken(newToken);
