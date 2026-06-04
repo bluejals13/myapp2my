@@ -21,6 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final TokenBlacklistService tokenBlacklistService;
+    private final RedisTemplate<String, String> redisTemplate; // 🔥 추가
 
     @Override
     protected void doFilterInternal(
@@ -59,6 +60,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 Long userId = jwtProvider.getUserId(token);
 
+                String tokenJti = jwtProvider.getJti(token); // 🔥 중요
+
+                // 🔥 3. active session 검사 (핵심 추가)
+                String activeJti = redisTemplate.opsForValue()
+                        .get("active-jti:" + userId);
+
+                if (activeJti != null && !activeJti.equals(tokenJti)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+                // 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
                 UsernamePasswordAuthenticationToken auth =
