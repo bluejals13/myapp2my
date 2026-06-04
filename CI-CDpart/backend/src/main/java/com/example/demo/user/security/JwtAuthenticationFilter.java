@@ -65,6 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 🔥 3. active session 검사 (핵심 추가)
                 String activeJti = redisTemplate.opsForValue()
                         .get("active-jti:" + userId);
+                
+                redisTemplate.opsForValue().set(
+                    "active-jti:" + userId,
+                    jti,
+                    Duration.ofDays(7)
+                );
 
                 if (activeJti != null && !activeJti.equals(tokenJti)) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
