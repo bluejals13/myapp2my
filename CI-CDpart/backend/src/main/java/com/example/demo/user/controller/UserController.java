@@ -36,14 +36,7 @@ public class UserController {
     // 리프레시 와 redis 연결 가
     @PostMapping("/auth/refresh")
     public TokenResponse refresh(@RequestBody RefreshRequest req) {
-        //System.out.println("REQ = " + req);
-        Claims claims = jwtProvider.parseClaims(token);
-        String type = claims.get("type", String.class);
-
-        if (!"refresh".equals(type)) {
-            throw new BadCredentialsException("INVALID_TOKEN_TYPE");
-        }
-        
+        //System.out.println("REQ = " + req);        
         return authService.refresh(req.getRefreshToken());
     }
     
