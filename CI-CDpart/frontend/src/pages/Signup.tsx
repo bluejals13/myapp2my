@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { apiFetch } from "../api";
@@ -38,15 +38,20 @@ export default function Signup() {
       setIsLoading(true);
       setErrorMessage("");
 
-      await apiFetch("/api/auth/signup", undefined, {
+      await apiFetch<void>("/api/auth/signup", undefined, {
         method: "POST",
         body: JSON.stringify(result.data),
       });
 
       navigate("/login");
-    } catch {
-      setErrorMessage("회원가입 실패");
-    } finally {
+      
+    } catch (e: any) {
+        const msg =
+        e?.message === "DUPLICATE_USERNAME"
+        ? "이미 존재하는 아이디입니다"
+        : "회원가입 실패";
+      setErrorMessage(msg);
+  } finally {
       setIsLoading(false);
     }
   };
@@ -56,8 +61,7 @@ export default function Signup() {
       <form
         className="auth-form"
         onSubmit={(e) => {
-          e.preventDefault();
-          handleSignup();
+          if (e.key === "Enter") handleSignup();
         }}
       >
         <h2>회원가입</h2>
@@ -75,6 +79,7 @@ export default function Signup() {
           <input
             type="password"
             value={password}
+            autoComplete="new-password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
@@ -91,10 +96,10 @@ export default function Signup() {
           <p className="error-message">{errorMessage}</p>
         )}
         <p className="switch-auth">
-          이미 계정이 있나요? <a href="/login">로그인</a>
+          이미 계정이 있나요? <Link to="/login">로그인</Link>
         </p>
 
-        <button disabled={isLoading}>
+        <button disabled={isLoading || !username || !password || !email}>
           {isLoading ? "가입 중..." : "회원가입"}
         </button>
       </form>
