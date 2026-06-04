@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,8 +30,11 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate);
+        }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -78,6 +82,7 @@ public class SecurityConfig {
                 res.setStatus(403);
             })
             )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
     @Bean
