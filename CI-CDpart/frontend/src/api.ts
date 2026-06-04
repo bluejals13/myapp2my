@@ -1,5 +1,5 @@
 // api.ts HTTP만
-import { authStorage } from "../auth.storage";
+import { authStorage } from "./auth.storage";
 
 export async function apiFetch<T>(
   url: string,
@@ -30,21 +30,11 @@ export async function apiFetch<T>(
   const data = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    window.dispatchEvent(
-      new CustomEvent("auth:error", {
-        detail: {
-          status: res.status,
-          ...data,
-        },
-      })
-    );
-
     throw {
       status: res.status,
-      code: data?.code,
-      message: data?.message,
+      data,
     };
   }
 
-  return data as T;
+  return data;
 }
