@@ -68,7 +68,7 @@ public class SecurityConfig {
             .authenticationEntryPoint((req, res, e) -> {
                 res.setContentType("application/json");
                 res.setStatus(401);
-                res.getWriter().write(""" { "success": false, "code": "UNAUTHORIZED" } """);
+                res.getWriter().write("{\"success\": false, \"code\": \"UNAUTHORIZED\"}");
             })
             .accessDeniedHandler((req, res, e) -> {
                 e.printStackTrace();
