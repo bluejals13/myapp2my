@@ -27,13 +27,11 @@ export async function apiFetch<T>(
   if (!res.ok) {
   const errorBody = await res.json().catch(() => null);
     
-    if (res.status === 401) {
       window.dispatchEvent(
         new CustomEvent("auth:error", {
           detail: errorBody,
           })
         );
-      }
       throw new Error("API Error");
     }
 
