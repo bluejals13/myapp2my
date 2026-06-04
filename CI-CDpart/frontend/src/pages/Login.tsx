@@ -38,7 +38,7 @@ export default function Login() {
       setErrorMessage("");
 
       // 2. API 호출 (POST + body 필수)
-      const data = await apiFetch("/api/auth/signup", {
+      const data = await apiFetch<{ accessToken: string }>("/api/auth/signup", {
           method: "POST",
           body: JSON.stringify(result.data),
         }
