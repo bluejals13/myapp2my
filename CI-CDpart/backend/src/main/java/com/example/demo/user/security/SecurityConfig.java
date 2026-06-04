@@ -36,7 +36,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -48,18 +48,15 @@ public class SecurityConfig {
 
     @Bean // 보안 필터 체인 permitall 과 authenticated 등 구별
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        
         return http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .formLogin(AbstractHttpConfigurer::disable);   // 🔥 추가
-            .httpBasic(AbstractHttpConfigurer::disable);   // 🔥 추가
-
-            System.out.println("TOKEN CHECK: " + token);
-            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));    
+            .formLogin(AbstractHttpConfigurer::disable)   // 🔥 추가
+            .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
             
             .authorizeHttpRequests(auth -> auth
                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -83,7 +80,6 @@ public class SecurityConfig {
             )
             .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
