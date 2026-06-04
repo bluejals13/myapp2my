@@ -28,22 +28,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-        
-        String path = request.getServletPath();
 
-        // 🔥 로그인/회원가입은 JWT 검사 자체를 안 함
-        if (path.startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-      
-        // 선 실행 토큰 생성 / 등록
-        try {
-            //System.out.println("JWT FILTER START"); //
-            
-            String header = request.getHeader("Authorization");
-            
-            //System.out.println("HEADER = " + header); //
+    String path = request.getServletPath();
+
+    if (path.startsWith("/api/auth")) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    try {
+        String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -51,16 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
-            
 
-        if (tokenBlacklistService.isBlacklisted(token)) {   // 1. blacklist 먼저
-            response.setStatus(401);
+        // 1. blacklist 먼저
+        if (tokenBlacklistService.isBlacklisted(token)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        //System.out.println("VALID = " + jwtProvider.validateToken(token)); //
-
-        if (token != null && jwtProvider.validateToken(token)) {
+        // 2. JWT validate
+        if (jwtProvider.validateToken(token)) {
 
             Long userId = jwtProvider.getUserId(token);
 
@@ -71,19 +64,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             principal,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                    );
-
-            //System.out.println("USER ID = " + userId); //
+                        );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-           } catch (Exception e) {
+            }
 
-            SecurityContextHolder.clearContext();
-                // 🔥 선택: 완전 차단하려면 아래 활성화
-                //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                //return;
+        } catch (Exception e) {
+        SecurityContextHolder.clearContext();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
         }
-        //System.out.println("AUTH = "+ SecurityContextHolder.getContext().getAuthentication());
 
         filterChain.doFilter(request, response);
     }
