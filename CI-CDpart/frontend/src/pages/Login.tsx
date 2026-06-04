@@ -49,7 +49,8 @@ export default function Login() {
 
       // 3. login (token 저장 + /me 호출)
       await login(data.accessToken);
-
+      await refreshUser();
+      
       // 4. 이동
       navigate("/main");
 
