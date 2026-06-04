@@ -38,13 +38,12 @@ export default function Signup() {
       setIsLoading(true);
       setErrorMessage("");
 
-      const data = await apiFetch<{ accessToken: string }>("/api/auth/signup", {
+      await apiFetch("/api/auth/signup", {
           method: "POST",
           body: JSON.stringify(result.data),
           }
         );
       
-      await login(data.accessToken);
       navigate("/login");
       
     } catch (e: any) {
