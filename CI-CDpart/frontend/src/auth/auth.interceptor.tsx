@@ -1,32 +1,30 @@
+// auth.interceptor.tsx
+import { apiFetch } from "./api";
 import { authStorage } from "./auth.storage";
 import { refreshToken } from "./auth.manager";
 
-export async function apiFetch(url, options = {}) {
-  const token = authStorage.get();
+export async function apiWithAuth<T>(
+  url: string,
+  options: RequestInit = {}
+): Promise<T> {
+  try {
+    return await apiFetch<T>(url, options);
+  } catch (err: any) {
+    const status = err?.status;
 
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-  });
-
-  if (res.status === 401) {
-    const data = await res.json().catch(() => null);
-
-    if (data?.code === "TOKEN_EXPIRED") {
-      const newToken = await refreshToken();
-      authStorage.set(newToken);
-
-      return apiFetch(url, options); // retry
+    if (status !== 401) {
+      throw err;
     }
 
-    if (data?.code === "SESSION_INVALID") {
-      authStorage.clear();
-      window.dispatchEvent(new Event("auth:logout"));
+    const newToken = await refreshToken();
+
+    if (!newToken) {
+      throw err;
     }
+
+    authStorage.set(newToken);
+
+    // retry 1번만
+    return await apiFetch<T>(url, options);
   }
-
-  return res.json();
 }
