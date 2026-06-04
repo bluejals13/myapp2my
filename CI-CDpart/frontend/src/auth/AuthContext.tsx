@@ -1,4 +1,4 @@
-// AuthContext.tsx
+// AuthContext.tsx UI 상태
 import {
   createContext,
   useContext,
