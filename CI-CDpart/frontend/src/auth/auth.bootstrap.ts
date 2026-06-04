@@ -1,6 +1,6 @@
 // auth.bootstrap.ts 초기 복구
 import { authStorage } from "./auth.storage";
-import { apiFetch } from "./api";
+import { apiFetch } from "../api";
 
 export async function initAuth(
   setUser: (u: any) => void,
