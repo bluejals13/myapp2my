@@ -1,7 +1,8 @@
 package com.example.demo.user.security;
 
-import lombok.RequiredArgsConstructor;
+import com.example.demo.user.jwt.JwtProvider;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
