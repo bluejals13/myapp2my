@@ -28,18 +28,13 @@ public class AuthService {
 
         // 1. 토큰에서 userId 추출
         Long userId = Long.parseLong(claims.getSubject());
-        String type = claims.get("type", String.class);
-        
-        if (!"refresh".equals(type)) {
-            throw new BadCredentialsException("INVALID_TOKEN_TYPE");
-        }    
 
         // 2. Redis에서 저장된 refreshToken 조회
         String saved = redisTemplate.opsForValue()
                 .get("refresh:" + userId);
 
         // 3. 검증
-        if (saved == null || !refreshToken.equals(saved)) {
+        if (saved == null || !saved.equals(refreshToken)) {
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
         }
 
