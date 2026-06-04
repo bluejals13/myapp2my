@@ -51,7 +51,18 @@ public class UserService {
         }
 
         String accessToken = jwtProvider.createToken(user.getId(), user.getUsername());
+        
+        // 리프레시 와 redis 연결 가
+        
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
+        redisTemplate.opsForValue().set(
+            "refresh:" + user.getId(),
+            refreshToken,
+            Duration.ofDays(7)
+        );
+        // 리프레시 와 redis 연결 나
+        
         return new LoginResponse(accessToken, "Bearer");
     }
 
