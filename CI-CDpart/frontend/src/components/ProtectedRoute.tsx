@@ -9,7 +9,7 @@ export default function ProtectedRoute() {
   if (isLoading) return null; // or spinner 으로 돌게
   
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   return <Outlet />;
