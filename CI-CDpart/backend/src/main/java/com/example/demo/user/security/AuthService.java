@@ -12,6 +12,7 @@ import com.example.demo.user.domain.User;
 import com.example.demo.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
+import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
