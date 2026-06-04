@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/auth/refresh")
     public TokenResponse refresh(@RequestBody RefreshRequest req) {
         //System.out.println("REQ = " + req);
-        return authService.refresh(req.refreshToken());
+        return authService.refresh(req.getRefreshToken());
     }
     
     // 비밀번호 변경 (JWT 필요)
