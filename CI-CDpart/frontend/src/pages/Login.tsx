@@ -5,7 +5,6 @@ import { apiFetch } from "../api";
 import { useAuth } from "../auth/AuthContext";
 
 import { loginSchema } from "../auth/auth.schema";
-import { loginResponseSchema } from "../auth/auth.response";
 
 import "./Auth.css";
 
