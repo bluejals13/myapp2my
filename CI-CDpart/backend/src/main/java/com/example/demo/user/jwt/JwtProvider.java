@@ -59,7 +59,7 @@ public class JwtProvider {
     
 
     // 2. claims 공통 파서
-    private Claims parseClaims(String token) {
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
