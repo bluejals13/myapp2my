@@ -1,4 +1,4 @@
-// auth.bootstrap.ts
+// auth.bootstrap.ts 초기 복구
 import { authStorage } from "./auth.storage";
 import { apiFetch } from "./api";
 
