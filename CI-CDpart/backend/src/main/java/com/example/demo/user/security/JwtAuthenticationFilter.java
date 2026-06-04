@@ -45,6 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String token = header.substring(7);
+            System.out.println("TOKEN CHECK: " + token);
+            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));
 
             // 🔥 1. blacklist 먼저
             if (tokenBlacklistService.isBlacklisted(token)) {
