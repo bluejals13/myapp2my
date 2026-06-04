@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import com.example.demo.user.security.CustomUserPrincipal;
 
 @RestController
 @RequestMapping("/api")
