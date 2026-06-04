@@ -30,6 +30,10 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtProvider jwtProvider;
+    private final TokenBlacklistService tokenBlacklistService;
+    private final RedisTemplate<String, String> redisTemplate;
     
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -69,20 +73,19 @@ public class SecurityConfig {
                .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            
             .exceptionHandling(ex -> ex
-            .authenticationEntryPoint((req, res, e) -> {
-                res.setContentType("application/json");
-                res.setStatus(401);
-                res.getWriter().write("{\"success\": false, \"code\": \"UNAUTHORIZED\"}");
+                .authenticationEntryPoint((req, res, e) -> {
+                    res.setContentType("application/json");
+                    res.setStatus(401);
+                    res.getWriter().write("{\"success\": false, \"code\": \"UNAUTHORIZED\"}");
             })
             .accessDeniedHandler((req, res, e) -> {
                 e.printStackTrace();
                 res.setStatus(403);
             })
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
     @Bean
