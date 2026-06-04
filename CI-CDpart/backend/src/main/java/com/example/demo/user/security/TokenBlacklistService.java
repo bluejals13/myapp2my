@@ -20,17 +20,23 @@ public class TokenBlacklistService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void blacklist(String token) {
+    public void blacklist(String token, JwtProvider jwtProvider) {
+        
+        String jti = jwtProvider.getJti(token);
+        
         redisTemplate.opsForValue().set(
-            "blacklist:" + token,
+            "blacklist:" + jti,
             "true",
             Duration.ofMinutes(30)
         );
     }
+    
+    public boolean isBlacklisted(String token, JwtProvider jwtProvider) {
 
-    public boolean isBlacklisted(String token) {
-        return "true".equals(
-            redisTemplate.opsForValue().get("blacklist:" + token)
+        String jti = jwtProvider.getJti(token);
+
+        return Boolean.TRUE.equals(
+                redisTemplate.hasKey("blacklist:" + jti)
         );
     }
 }
