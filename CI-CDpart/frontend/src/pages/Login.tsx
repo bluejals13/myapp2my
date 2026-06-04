@@ -49,11 +49,16 @@ export default function Login() {
       // 3. login (token 저장 + /me 호출)
       await login(data.accessToken);
 
+      await new Promise(requestAnimationFrame);
+
       // 4. 이동
       navigate("/main");
 
     } catch {
-      setErrorMessage("로그인 실패");
+      setErrorMessage(
+    e?.message === "INVALID_CREDENTIALS"
+      ? "아이디 또는 비밀번호가 틀렸습니다"
+      : "로그인 실패");
     } finally {
       setIsLoading(false);
     }
