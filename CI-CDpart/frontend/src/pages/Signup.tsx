@@ -61,7 +61,7 @@ export default function Signup() {
       <form
         className="auth-form"
         onSubmit={(e) => {
-          if (e.key === "Enter") handleSignup();
+          e.preventDefault(); handleSignup();
         }}
       >
         <h2>회원가입</h2>
