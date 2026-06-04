@@ -21,8 +21,16 @@ public class AuthService {
 
     public TokenResponse refresh(String refreshToken) {
 
+        // 0. parse once
+        Claims claims = jwtProvider.parseClaims(refreshToken);
+
         // 1. 토큰에서 userId 추출
-        Long userId = jwtProvider.getUserId(refreshToken);
+        Long userId = Long.parseLong(claims.getSubject());
+        String type = claims.get("type", String.class);
+        
+        if (!"refresh".equals(type)) {
+            throw new BadCredentialsException("INVALID_TOKEN_TYPE");
+        }    
 
         // 2. Redis에서 저장된 refreshToken 조회
         String saved = redisTemplate.opsForValue()
