@@ -37,12 +37,14 @@ public class UserController {
     @PostMapping("/auth/refresh")
     public TokenResponse refresh(@RequestBody RefreshRequest req) {
         //System.out.println("REQ = " + req);
-        return authService.refresh(req.getRefreshToken());
+        Claims claims = jwtProvider.parseClaims(token);
         String type = claims.get("type", String.class);
 
         if (!"refresh".equals(type)) {
             throw new BadCredentialsException("INVALID_TOKEN_TYPE");
         }
+        
+        return authService.refresh(req.getRefreshToken());
     }
     
     // 비밀번호 변경 (JWT 필요)
