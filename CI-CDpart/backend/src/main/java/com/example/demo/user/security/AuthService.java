@@ -46,6 +46,13 @@ public class AuthService {
         String newAccessToken =
             jwtProvider.createAccessToken(user.getId(), user.getUsername());
 
+        String newJti = jwtProvider.getJti(newAccessToken);
+        redisTemplate.opsForValue().set(
+            "active-jti:" + userId,
+            newJti,
+            Duration.ofDays(7)
+            );
+
         return new TokenResponse(newAccessToken);
     }
 }
