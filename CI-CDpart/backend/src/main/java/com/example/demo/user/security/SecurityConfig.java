@@ -55,6 +55,9 @@ public class SecurityConfig {
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .formLogin(AbstractHttpConfigurer::disable)   // 🔥 추가
+            .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
+            
             .authorizeHttpRequests(auth -> auth
                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                .requestMatchers("/api/auth/**").permitAll()
