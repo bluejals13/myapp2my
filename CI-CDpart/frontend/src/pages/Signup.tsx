@@ -38,7 +38,7 @@ export default function Signup() {
       setIsLoading(true);
       setErrorMessage("");
 
-      await apiFetch<void>("/api/auth/signup", undefined, {
+      await apiFetch<void>("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify(result.data),
       });
