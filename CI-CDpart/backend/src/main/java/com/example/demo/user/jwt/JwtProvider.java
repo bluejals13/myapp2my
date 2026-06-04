@@ -30,8 +30,8 @@ public class JwtProvider {
         );
     }
 
-    // 1. 토큰 생성
-    public String createToken(Long userId, String username) {
+    // 1. 접근 토큰 생성
+    public String createAccessToken(Long userId, String username) {
     Date now = new Date();
     Date expiry = new Date(now.getTime() + expiration);
 
@@ -43,6 +43,20 @@ public class JwtProvider {
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 }
+    // 1. 리프레시 토큰 생성    
+    public String createRefreshToken(Long userId) {
+    Date now = new Date();
+    Date expiry = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000L);
+
+    return Jwts.builder()
+            .setSubject(String.valueOf(userId))
+            .claim("type", "refresh")
+            .setIssuedAt(now)
+            .setExpiration(expiry)
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+}
+    
 
     // 2. claims 공통 파서
     private Claims parseClaims(String token) {
