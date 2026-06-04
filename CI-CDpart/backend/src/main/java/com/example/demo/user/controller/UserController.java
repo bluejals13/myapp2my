@@ -32,7 +32,7 @@ public class UserController {
     // 내 정보 조회 (JWT 필요)
     @GetMapping("/users/me")
     public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
-        System.out.println("PRINCIPAL = " + principal.getUserId()););
+        System.out.println("PRINCIPAL = " + principal.getUserId());
         Long userId = (Long) authentication.getPrincipal();
         return userService.getMe(userId);
     }
