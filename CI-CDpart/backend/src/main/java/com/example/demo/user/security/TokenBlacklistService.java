@@ -1,18 +1,10 @@
 package com.example.demo.user.security;
 
-import com.example.demo.user.jwt.JwtProvider;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.user.dto.TokenResponse;
-import com.example.demo.user.domain.User;
-import com.example.demo.user.repository.UserRepository;
-
-import io.jsonwebtoken.Claims;
-import java.time.Duration; // 시간
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +12,16 @@ public class TokenBlacklistService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void blacklist(String token, JwtProvider jwtProvider) {
-        
-        String jti = jwtProvider.getJti(token);
-        
+    // 🔥 blacklist 등록
+    public void blacklist(String jti) {
         redisTemplate.opsForValue().set(
-            "blacklist:" + jti,
-            "true",
-            Duration.ofMinutes(30)
+                "blacklist:" + jti,
+                "true",
+                Duration.ofMinutes(30)
         );
     }
-    
+
+    // 🔥 체크
     public boolean isBlacklisted(String token, JwtProvider jwtProvider) {
 
         String jti = jwtProvider.getJti(token);
