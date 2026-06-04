@@ -26,7 +26,7 @@ public class TokenBlacklistService {
     }
 
     // 🔥 체크
-    public boolean isBlacklisted(String token, JwtProvider jwtProvider) {
+    public boolean isBlacklisted(String token) {
 
         String jti = jwtProvider.getJti(token);
 
