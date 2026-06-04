@@ -1,11 +1,5 @@
 // AuthContext.tsx UI 상태
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
+import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../api";
 import { authStorage } from "./auth.storage";
 
@@ -30,12 +24,11 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(authStorage.get());
   const [user, setUser] = useState<User | null>(null);
-
   const [isLoading, setIsLoading] = useState(true);
+  
+  const isLoggedIn = !!token;
 
   const refreshUser = async () => {
-    if (!authStorage.get()) return;
-
     try {
       const data = await apiFetch<User>("/api/users/me");
       setUser(data);
@@ -56,14 +49,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    if (token) refreshUser();
-  }, [token]);
+    const init = async () => {
+      if (authStorage.get()) {
+        await refreshUser();
+      }
+      setIsLoading(false);
+    };
 
-  useEffect(() => {
-    const handler = () => logout();
-
-    window.addEventListener("auth:logout", handler);
-    return () => window.removeEventListener("auth:logout", handler);
+    init();
   }, []);
 
   return (
