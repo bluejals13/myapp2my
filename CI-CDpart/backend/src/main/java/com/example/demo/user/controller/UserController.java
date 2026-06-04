@@ -28,13 +28,18 @@ public class UserController {
 
     // 내 정보 조회 (JWT 필요)
     @GetMapping("/users/me")
-    public UserResponse getMe(
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
+    public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
         //System.out.println("PRINCIPAL = " + principal);
         return userService.getMe(principal.getUserId());
     }
-
+    
+    // 리프레시 와 redis 연결 가
+    @PostMapping("/auth/refresh")
+    public TokenResponse refresh(@RequestBody RefreshRequest req) {
+        //System.out.println("REQ = " + req);
+        return authService.refresh(req.refreshToken());
+    }
+    
     // 비밀번호 변경 (JWT 필요)
     @PatchMapping("/users/me/password")
     public void updatePassword(
