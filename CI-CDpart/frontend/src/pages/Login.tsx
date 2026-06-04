@@ -18,8 +18,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    // 1. zod validation
-    //const result = loginSchema.safeParse({ username, password });
+      const result = loginSchema.safeParse({
+        username,
+        password,
+        });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
