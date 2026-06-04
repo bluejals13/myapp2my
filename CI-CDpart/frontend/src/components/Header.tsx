@@ -21,14 +21,15 @@ export default function Header() {
             <Link to="/dashboard">Dashboard</Link>
 
             <span style={{ marginLeft: "auto" }}>
-              {user?.username}님
+              {user ? `${user.username}님` : ""}
             </span>
 
             <button
               onClick={() => {
+                const handleLogout = () => {
                 logout();
-                navigate("/login");
-              }}
+                requestAnimationFrame(() => navigate("/login"));
+              };}
             >
               로그아웃
             </button>
