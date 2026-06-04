@@ -1,6 +1,6 @@
 package com.example.demo.user.dto;
 
-return new UserResponse(
-        user.getId(),
-        user.getUsername()
-); {}
+public record UserResponse(
+        Long id,
+        String username
+) {}
