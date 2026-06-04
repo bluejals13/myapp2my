@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtProvider {
@@ -35,8 +36,11 @@ public class JwtProvider {
     Date now = new Date();
     Date expiry = new Date(now.getTime() + expiration);
 
+    String jti = UUID.randomUUID().toString();
+
     return Jwts.builder()
             .setSubject(String.valueOf(userId))
+            .setId(jti) // 🔥 핵심
             .claim("username", username)
             .setIssuedAt(now)
             .setExpiration(expiry)
@@ -48,8 +52,11 @@ public class JwtProvider {
     Date now = new Date();
     Date expiry = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000L);
 
+    String jti = UUID.randomUUID().toString();
+
     return Jwts.builder()
             .setSubject(String.valueOf(userId))
+            .setId(jti) // 🔥 핵심
             .claim("type", "refresh")
             .setIssuedAt(now)
             .setExpiration(expiry)
@@ -65,6 +72,10 @@ public class JwtProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+    // 2-5. Jti 추출
+    public String getJti(String token) {
+        return parseClaims(token).getId();
     }
 
     // 3. userId 추출
