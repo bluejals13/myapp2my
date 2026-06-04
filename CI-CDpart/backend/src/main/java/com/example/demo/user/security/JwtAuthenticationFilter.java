@@ -51,6 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
+            
+
+        if (tokenBlacklistService.isBlacklisted(token)) {   // 1. blacklist 먼저
+            response.setStatus(401);
+            return;
+        }
 
         //System.out.println("VALID = " + jwtProvider.validateToken(token)); //
 
@@ -70,8 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //System.out.println("USER ID = " + userId); //
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-           }
-
            } catch (Exception e) {
 
             SecurityContextHolder.clearContext();
