@@ -2,10 +2,14 @@
 import { authStorage } from "./auth.storage";
 
 let isRefreshing = false;
-let queue: any[] = [];
+let queue: ((token: string | null) => void)[] = [];
 
-export async function refreshToken() {
-  if (isRefreshing) return new Promise(resolve => queue.push(resolve));
+export async function refreshToken(): Promise<string | null> {
+  if (isRefreshing) {
+    return new Promise((resolve) => {
+      queue.push(resolve);
+    });
+  }
 
   isRefreshing = true;
 
@@ -15,14 +19,25 @@ export async function refreshToken() {
       credentials: "include",
     });
 
+    if (!res.ok) throw new Error("refresh failed");
+
     const data = await res.json();
+    const newToken = data.accessToken;
 
-    authStorage.set(data.accessToken);
+    authStorage.set(newToken);
 
-    queue.forEach(cb => cb(data.accessToken));
+    queue.forEach((cb) => cb(newToken));
     queue = [];
 
-    return data.accessToken;
+    return newToken;
+  } catch (e) {
+    queue.forEach((cb) => cb(null));
+    queue = [];
+
+    authStorage.clear();
+    window.dispatchEvent(new Event("auth:logout"));
+
+    return null;
   } finally {
     isRefreshing = false;
   }
