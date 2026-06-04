@@ -38,9 +38,7 @@ export default function Signup() {
       setIsLoading(true);
       setErrorMessage("");
 
-      const data = await apiFetch<LoginResponse>(
-        "/api/auth/login",
-        {
+      const data = await apiFetch("/api/auth/signup", {
           method: "POST",
           body: JSON.stringify(result.data),
           }
