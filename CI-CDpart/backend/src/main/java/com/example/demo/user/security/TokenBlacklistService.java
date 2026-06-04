@@ -29,8 +29,8 @@ public class TokenBlacklistService {
     }
 
     public boolean isBlacklisted(String token) {
-        return Boolean.TRUE.equals(
-            redisTemplate.hasKey("blacklist:" + token)
+        return "true".equals(
+            redisTemplate.opsForValue().get("blacklist:" + token)
         );
     }
 }
