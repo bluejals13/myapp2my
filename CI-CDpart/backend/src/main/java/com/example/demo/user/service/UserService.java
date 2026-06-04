@@ -21,6 +21,7 @@ import java.time.Duration; // 시간
 @RequiredArgsConstructor
 public class UserService {
     
+    private final AuthService authService;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
