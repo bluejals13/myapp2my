@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+import com.example.demo.user.jwt.JwtProvider;
+
 @Service
 @RequiredArgsConstructor
 public class TokenBlacklistService {
