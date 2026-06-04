@@ -25,8 +25,12 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
-    throw new Error("API Error");
-  }
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.dispatchEvent(new Event("auth:logout"));
+        }
+      throw new Error("API Error");
+    }
 
   console.log("METHOD =", options.method);
   console.log("BODY =", options.body);
