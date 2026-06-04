@@ -55,8 +55,8 @@ public class SecurityConfig {
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .formLogin(AbstractHttpConfigurer::disable)   // 🔥 추가
-            .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
+            .formLogin(AbstractHttpConfigurer::disable);   // 🔥 추가
+            .httpBasic(AbstractHttpConfigurer::disable);   // 🔥 추가
 
             System.out.println("TOKEN CHECK: " + token);
             System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));    
