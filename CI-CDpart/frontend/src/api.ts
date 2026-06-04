@@ -28,6 +28,9 @@ export async function apiFetch<T>(
     throw new Error("API Error");
   }
 
+  console.log("METHOD =", options.method);
+  console.log("BODY =", options.body);
+
   const data = await res.json();
 
   if (schema) {
