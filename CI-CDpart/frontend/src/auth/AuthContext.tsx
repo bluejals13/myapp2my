@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(authStorage.get());
   const [user, setUser] = useState<User | null>(null);
 
-  const isLoggedIn = !!token;
+  const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = async () => {
     if (!authStorage.get()) return;
