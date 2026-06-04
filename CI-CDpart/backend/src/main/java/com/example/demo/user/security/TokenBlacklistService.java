@@ -27,11 +27,8 @@ public class TokenBlacklistService {
 
     // 🔥 체크
     public boolean isBlacklisted(String token) {
-
         String jti = jwtProvider.getJti(token);
 
-        return Boolean.TRUE.equals(
-                redisTemplate.set("blacklist:" + jti, "1")
-        );
+    return redisTemplate.hasKey("blacklist:" + jti);
     }
 }
