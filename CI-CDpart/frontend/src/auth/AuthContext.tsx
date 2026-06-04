@@ -20,38 +20,29 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(() =>
-    authStorage.getToken()
-  );
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(authStorage.get());
+  const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const isLoggedIn = !!token;
 
   // ✅ /me 호출 (중복 방지 + 안정화)
-  const refreshUser = useCallback(async () => {
-    if (!authStorage.getToken()) return;
-
-    try {
-      const data = await apiFetch<User>("/api/users/me", undefined, {
-        method: "GET",
-        });
+  const refreshUser = async () => {
+    const data = await apiFetch("/api/users/me");
 
         setUser(data);
       } catch (err) {
       console.error("refreshUser failed:", err);
-      setUser(null);
+      setUser(data);
     }
-  }, []);
+  }
 
   // ✅ login 문제 없음
-  const login = async (newToken: string) => {
+  const login = (newToken: string) => {
     authStorage.set(newToken);
     setToken(newToken);
-
-    await refreshUser();
   };
 
   // ✅ logout
