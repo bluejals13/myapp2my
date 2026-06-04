@@ -38,6 +38,11 @@ public class UserController {
     public TokenResponse refresh(@RequestBody RefreshRequest req) {
         //System.out.println("REQ = " + req);
         return authService.refresh(req.getRefreshToken());
+        String type = claims.get("type", String.class);
+
+        if (!"refresh".equals(type)) {
+            throw new BadCredentialsException("INVALID_TOKEN_TYPE");
+        }
     }
     
     // 비밀번호 변경 (JWT 필요)
