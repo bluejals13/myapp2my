@@ -11,6 +11,8 @@ import com.example.demo.user.dto.TokenResponse;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.repository.UserRepository;
 
+import io.jsonwebtoken.Claims;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
