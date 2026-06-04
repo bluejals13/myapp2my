@@ -18,6 +18,7 @@ type AuthContextType = {
   token: string | null;
   user: User | null;
   isLoggedIn: boolean;
+  isLoading: boolean;   // ← 추가
 
   login: (token: string) => void;
   logout: () => void;
