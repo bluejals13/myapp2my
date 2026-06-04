@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
 
-    // SECURITY + AUTH (JWT 포함)
+    // SECURITY + AUTH (JWT 포함) 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
