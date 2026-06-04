@@ -32,22 +32,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // ✅ /me 호출 (중복 방지 + 안정화)
   const refreshUser = useCallback(async () => {
-    if (!authStorage.getToken()) {
-      setUser(null);
-      return;
-    }
+    if (!authStorage.getToken()) return;
 
     try {
-      const data = await apiFetch<User>(
-        "/api/users/me",
-        undefined,
-        {
-          method: "GET",
-        }
-      );
+      const data = await apiFetch<User>("/api/users/me", undefined, {
+        method: "GET",
+        });
 
-      setUser(data);
-    } catch (err) {
+        setUser(data);
+      } catch (err) {
       console.error("refreshUser failed:", err);
       setUser(null);
     }
