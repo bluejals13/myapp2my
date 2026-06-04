@@ -1,36 +1,23 @@
-import { z } from "zod";
+// api.ts
+import { authStorage } from "./auth.storage";
 
-export async function apiFetch<T>(
-  url: string,
-  schema?: z.ZodSchema<T>,
-  options: RequestInit = {}
-): Promise<T> {
-  const token = localStorage.getItem("token");
+export async function apiFetch<T>(url: string, options: RequestInit = {}) {
+  const token = authStorage.get();
 
   const headers = new Headers(options.headers);
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  const isFormData = options.body instanceof FormData;
-
-  if (!isFormData && !headers.has("Content-Type")) {
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
 
-  const res = await fetch(url, {
-    ...options,
-    headers,
-  });
+  const res = await fetch(url, { ...options, headers });
 
-  if (!res.ok) {
-  const errorBody = await res.json().catch(() => null);
-    
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {    
       window.dispatchEvent(
-        new CustomEvent("auth:error", {
-          detail: errorBody,
-          })
+        new CustomEvent("auth:error", { detail: { status: res.status, ...data } })
         );
       throw new Error("API Error");
     }
@@ -38,17 +25,5 @@ export async function apiFetch<T>(
   console.log("METHOD =", options.method);
   console.log("BODY =", options.body);
 
-  const data = await res.json();
-
-  if (schema) {
-  const result = schema.safeParse(data);
-
-    if (!result.success) {
-      console.error("Zod Error:", result.error.flatten());
-      throw new Error("Response schema mismatch");
-    }
-    return result.data;
-  }
-
-  return data as T;
+  return data;
 }
