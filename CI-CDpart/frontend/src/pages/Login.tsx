@@ -5,7 +5,6 @@ import { useAuth } from "../auth/AuthContext";
 
 import { loginSchema } from "../auth/auth.schema";
 import { loginResponseSchema } from "../auth/auth.response";
-import { type LoginResponse } from "../auth/auth.schema";
 
 import "./Auth.css";
 
@@ -20,7 +19,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     // 1. zod validation
-    const result = loginSchema.safeParse({ username, password });
+    //const result = loginSchema.safeParse({ username, password });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
