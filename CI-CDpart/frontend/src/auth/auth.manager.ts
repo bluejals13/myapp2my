@@ -1,4 +1,4 @@
-// auth.manager.ts
+// auth.manager.ts refresh + queue
 import { authStorage } from "./auth.storage";
 
 let isRefreshing = false;
