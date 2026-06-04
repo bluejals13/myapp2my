@@ -72,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         token,
         user,
         isLoggedIn,
+        isLoading,   // ← 이거 필수
         login,
         logout,
         refreshUser,
