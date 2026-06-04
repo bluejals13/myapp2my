@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { apiFetch } from "../api";
 import { authStorage } from "./auth.service";
 
@@ -11,6 +11,7 @@ type AuthContextType = {
   token: string | null;
   user: User | null;
   isLoggedIn: boolean;
+  isLoading: boolean;
 
   login: (token: string) => Promise<void>;
   logout: () => void;
@@ -25,43 +26,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isLoggedIn = !!token;
 
-  // /me 호출
-  const refreshUser = async () => {
-    if (!token) return;
+  // ✅ /me 호출 (중복 방지 + 안정화)
+  const refreshUser = useCallback(async () => {
+    if (!authStorage.getToken()) {
+      setUser(null);
+      return;
+    }
 
     try {
-      const data = await apiFetch<User>("/api/users/me");
-      // console.log(data);
+      const data = await apiFetch<User>(
+        "/api/users/me",
+        undefined,
+        {
+          method: "GET",
+        }
+      );
+
       setUser(data);
-    } catch {
+    } catch (err) {
+      console.error("refreshUser failed:", err);
       setUser(null);
     }
-  };
+  }, []);
 
-  // login
+  // ✅ login
   const login = async (newToken: string) => {
-    setToken(newToken);
     authStorage.set(newToken);
+    setToken(newToken);
 
     await refreshUser();
   };
 
-  // logout
+  // ✅ logout
   const logout = () => {
+    authStorage.clear();
     setToken(null);
     setUser(null);
-    authStorage.clear();
   };
 
-  // 앱 시작 시 자동 user 복구
+  // ✅ 앱 최초 로딩 시 1회만 user 복구
   useEffect(() => {
-    if (token) {
-      refreshUser();
-    }
-  }, [token]);
+    const init = async () => {
+      if (authStorage.getToken()) {
+        await refreshUser();
+      }
+      setIsLoading(false);
+    };
+
+    init();
+  }, [refreshUser]);
 
   return (
     <AuthContext.Provider
@@ -69,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         token,
         user,
         isLoggedIn,
+        isLoading,
         login,
         logout,
         refreshUser,
