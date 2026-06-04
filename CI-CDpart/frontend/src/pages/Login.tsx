@@ -53,11 +53,13 @@ export default function Login() {
       // 4. 이동
       navigate("/main");
 
-    } catch {
-      setErrorMessage(
-    e?.message === "INVALID_CREDENTIALS"
-      ? "아이디 또는 비밀번호가 틀렸습니다"
-      : "로그인 실패");
+    } catch (e: any) {
+        const msg =
+          e?.message === "INVALID_CREDENTIALS"
+            ? "아이디 또는 비밀번호가 틀렸습니다"
+            : "로그인 실패";
+
+        setErrorMessage(msg);
     } finally {
       setIsLoading(false);
     }
