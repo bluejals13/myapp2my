@@ -84,9 +84,10 @@ public class UserService {
     // 내 정보 조회
     public UserResponse getMe(Long userId) {
 
-        User user = getUser(userId);
+        User user = userRepository.findById(userId)
+            .orElseThrow();
 
-        return new UserResponse(user.getId(), user.getUsername());
+        return new UserResponse(user);
     }
 
     // 비밀번호 변경
