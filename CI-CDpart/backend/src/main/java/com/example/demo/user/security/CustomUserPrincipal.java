@@ -7,8 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CustomUserPrincipal {
 
-    private Long userId;
-    private final String username;
+    private final Long userId;
 
+    public CustomUserPrincipal(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
 }
-
