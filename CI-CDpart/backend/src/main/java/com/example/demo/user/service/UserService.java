@@ -20,7 +20,8 @@ import java.time.Duration; // 시간
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
+    
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
