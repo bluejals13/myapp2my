@@ -31,7 +31,7 @@ public class TokenBlacklistService {
         String jti = jwtProvider.getJti(token);
 
         return Boolean.TRUE.equals(
-                redisTemplate.hasKey("blacklist:" + jti)
+                redisTemplate.hasKey("blacklist:" + jti, "1")
         );
     }
 }
