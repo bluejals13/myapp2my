@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,55 +24,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
 
-    String path = request.getServletPath();
+        String path = request.getServletPath();
 
-    if (path.startsWith("/api/auth")) {
-        filterChain.doFilter(request, response);
-        return;
-    }
-
-    try {
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = header.substring(7);
+        try {
+            String header = request.getHeader("Authorization");
 
-        // 1. blacklist 먼저
-        if (tokenBlacklistService.isBlacklisted(token, jwtProvider)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
+            if (header == null || !header.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        // 2. JWT validate
-        if (jwtProvider.validateToken(token)) {
+            String token = header.substring(7);
 
-            Long userId = jwtProvider.getUserId(token);
+            // 🔥 1. blacklist 먼저
+            if (tokenBlacklistService.isBlacklisted(token, jwtProvider)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
 
-            CustomUserPrincipal principal = new CustomUserPrincipal(userId);
+            // 🔥 2. validate
+            if (jwtProvider.validateToken(token)) {
 
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            principal,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                Long userId = jwtProvider.getUserId(token);
+
+                CustomUserPrincipal principal = new CustomUserPrincipal(userId);
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                principal,
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
                         );
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
 
         } catch (Exception e) {
-        SecurityContextHolder.clearContext();
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        return;
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request, response);
