@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.user.dto.TokenResponse;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.repository.UserRepository;
 
