@@ -39,7 +39,6 @@ export default function Login() {
       // 2. API 호출 (POST + body 필수)
       const data = await apiFetch<LoginResponse>(
         "/api/auth/login",
-        loginResponseSchema,
         {
           method: "POST",
           body: JSON.stringify(result.data),
