@@ -1,5 +1,5 @@
 // api.ts HTTP만
-import { authStorage } from "./auth.storage";
+import { authStorage } from "./auth/auth.storage";
 
 export async function apiFetch<T>(
   url: string,
