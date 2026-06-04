@@ -4,7 +4,8 @@ import { apiFetch } from "../api";
 import { useAuth } from "../auth/AuthContext";
 
 import { loginSchema } from "../auth/auth.schema";
-import { loginResponseSchema, type LoginResponse } from "../auth/auth.response";
+import { loginResponseSchema } from "../auth/auth.response";
+import { type LoginResponse } from "../auth/auth.schema";
 
 import "./Auth.css";
 
