@@ -30,9 +30,10 @@ public class UserController {
 
     // 내 정보 조회 (JWT 필요)
     @GetMapping("/users/me")
-    public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
+    public UserResponse getMe(Authentication authentication) {
         System.out.println("PRINCIPAL = " + principal);
-        return userService.getMe(principal.getUserId());
+        Long userId = (Long) authentication.getPrincipal();
+        return userService.getMe(userId);
     }
     
     // 리프레시 와 redis 연결 가
