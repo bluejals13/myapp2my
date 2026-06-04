@@ -1,10 +1,6 @@
 package com.example.demo.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class CustomUserPrincipal {
-    private final Long userId;
-}
+public record UserResponse(
+        Long id,
+        String username
+) {}
