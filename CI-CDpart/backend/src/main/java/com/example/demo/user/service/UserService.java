@@ -54,9 +54,17 @@ public class UserService {
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
-
+        // 접근 과 redis 연결 가
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
-        
+
+        String jti = jwtProvider.getJti(accessToken);
+
+        redisTemplate.opsForValue().set(
+            "active-jti:" + user.getId(),
+            jti,
+            Duration.ofDays(7)
+            );
+        // 접근 과 redis 연결 나
         // 리프레시 와 redis 연결 가
         
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
