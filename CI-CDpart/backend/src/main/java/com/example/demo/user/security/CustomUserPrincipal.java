@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class CustomUserPrincipal {
 
     private final Long userId;
@@ -13,7 +12,4 @@ public class CustomUserPrincipal {
         this.userId = userId;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 }
