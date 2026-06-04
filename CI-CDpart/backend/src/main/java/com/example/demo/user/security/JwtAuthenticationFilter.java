@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 🔥 1. blacklist 먼저
             if (tokenBlacklistService.isBlacklisted(token)) {
-                response.setStatus(401);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
