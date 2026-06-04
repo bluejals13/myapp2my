@@ -50,7 +50,7 @@ public class UserService {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
 
-        String accessToken = jwtProvider.createToken(user.getId(), user.getUsername());
+        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
         
         // 리프레시 와 redis 연결 가
         
