@@ -59,15 +59,16 @@ public class SecurityConfig {
                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                .requestMatchers("/api/auth/**").permitAll()
                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-               .requestMatchers("/actuator/prometheus").permitAll()
+               .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter,
                     UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
             .authenticationEntryPoint((req, res, e) -> {
-                e.printStackTrace();
+                res.setContentType("application/json");
                 res.setStatus(401);
+                res.getWriter().write(""" { "success": false, "code": "UNAUTHORIZED" } """);
             })
             .accessDeniedHandler((req, res, e) -> {
                 e.printStackTrace();
