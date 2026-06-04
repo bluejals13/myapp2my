@@ -57,6 +57,9 @@ public class SecurityConfig {
             )
             .formLogin(AbstractHttpConfigurer::disable)   // 🔥 추가
             .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
+
+            System.out.println("TOKEN CHECK: " + token);
+            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));    
             
             .authorizeHttpRequests(auth -> auth
                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
