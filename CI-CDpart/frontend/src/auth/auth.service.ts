@@ -1,4 +1,4 @@
-// auth.service.ts
+// auth.service.ts localStorage
 const TOKEN_KEY = "token";
 
 export const authStorage = {
