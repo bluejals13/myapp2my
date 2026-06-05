@@ -17,11 +17,19 @@ public class TokenBlacklistService {
 
     // 🔥 blacklist 등록
     public void blacklist(String token) {
+        
+        long remain =
+        jwtProvider.parseClaims(token)
+                   .getExpiration()
+                   .getTime()
+        - System.currentTimeMillis();
+
+        
         String jti = jwtProvider.getJti(token);
         redisTemplate.opsForValue().set(
                 "blacklist:" + jti,
                 "true",
-                Duration.ofMinutes(30)
+                Duration.ofMinutes(remain)
         );
     }
 
