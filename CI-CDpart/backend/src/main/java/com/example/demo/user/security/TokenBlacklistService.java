@@ -10,12 +10,12 @@ import com.example.demo.user.jwt.JwtProvider;
 
 @Service
 @RequiredArgsConstructor
-public class TokenBlacklistService {
+public class TokenBlacklistService {    // 이미 로그인 된 계정 에 로그인 불가 만드는 파일
 
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtProvider jwtProvider;
 
-    // 🔥 blacklist 등록
+    // blacklist 등록
     public void blacklist(String token) {
         
         long remain =
@@ -33,7 +33,7 @@ public class TokenBlacklistService {
         );
     }
 
-    // 🔥 체크
+    // 체크
     public boolean isBlacklisted(String token) {
         String jti = jwtProvider.getJti(token);
 
