@@ -14,7 +14,7 @@ type AuthContextType = {
   isLoggedIn: boolean;
   isLoading: boolean;   // ← 추가
 
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
