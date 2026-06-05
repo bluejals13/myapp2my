@@ -16,7 +16,7 @@ import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService {    // 리프레시 토큰 생성 파일
 
     private final JwtProvider jwtProvider;
     private final RedisTemplate<String, String> redisTemplate;
