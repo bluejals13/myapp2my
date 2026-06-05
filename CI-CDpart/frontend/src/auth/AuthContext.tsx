@@ -40,6 +40,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (newToken: string) => {
     authStorage.set(newToken);
     setToken(newToken);
+    
+    const me = await apiFetch<User>("/api/users/me");
+    
+    setUser(me);
   };
 
   const logout = () => {
