@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = (newToken: string) => {
+  const login = async (newToken: string) => {
     authStorage.set(newToken);
     setToken(newToken);
     
