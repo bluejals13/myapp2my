@@ -51,27 +51,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("TOKEN CHECK: " + token);
             System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));
 
-            // 🔥 1. blacklist 먼저
+            // 1. 블랙리스트 검사
             if (tokenBlacklistService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
-            // 🔥 2. validate
-            if (jwtProvider.validateToken(token)) {
-
+            // 2. JWT 검증
+            if (!jwtProvider.validateToken(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                 return;
+            }
+            
                 Long userId = jwtProvider.getUserId(token);
-
                 String tokenJti = jwtProvider.getJti(token); // 🔥 중요
 
-                // 🔥 3. active session 검사 (핵심 추가)
+                // 3. Redis의 현재 활성 세션 조회
                 String activeJti = redisTemplate.opsForValue()
                         .get("active-jti:" + userId);
+            // active-jti 없으면 실패
+            if (activeJti == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
             
-                if (activeJti != null && !activeJti.equals(tokenJti)) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
+            // 현재 활성 토큰이 아니면 실패
+            if (!tokenJti.equals(activeJti)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
                 // 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
