@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await apiFetch<User>("/api/users/me");
       setUser(data);
     } catch {
-      setUser(null);
+      logout();
     }
   };
 
