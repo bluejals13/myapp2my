@@ -31,6 +31,12 @@ public class AuthService {
         // 0. parse once
         Claims claims = jwtProvider.parseClaims(refreshToken);
 
+        String type = claims.get("type", String.class);
+
+        if (!"refresh".equals(type)) {
+            throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
+            }
+
         // 1. 토큰에서 userId 추출
         Long userId = Long.parseLong(claims.getSubject());
 
