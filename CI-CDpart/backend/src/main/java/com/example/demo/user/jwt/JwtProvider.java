@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-public class JwtProvider {
+public class JwtProvider {    // 각 토큰 제공 파일
 
     // 환경 변수 는 나중에 고려 1.
     @Value("${jwt.secret}")
