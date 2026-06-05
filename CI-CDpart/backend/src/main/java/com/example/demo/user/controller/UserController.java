@@ -33,8 +33,7 @@ public class UserController {
     @GetMapping("/users/me")
     public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
         System.out.println("PRINCIPAL = " + principal.getUserId());
-        Long userId = (Long) authentication.getPrincipal();
-        return userService.getMe(userId);
+        return userService.getMe(principal.getUserId());
     }
     
     // 리프레시 와 redis 연결 가
