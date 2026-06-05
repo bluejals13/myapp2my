@@ -19,7 +19,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 토큰 검증 필터
 
     private final JwtProvider jwtProvider;
     private final TokenBlacklistService tokenBlacklistService;
