@@ -14,11 +14,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
+    
+    private final AuthService authService;
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -49,16 +54,38 @@ public class UserService {
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
+        // 접근 과 redis 연결 가
+        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
 
-        String accessToken = jwtProvider.createToken(user.getId(), user.getUsername());
+        String jti = jwtProvider.getJti(accessToken);
 
+        redisTemplate.opsForValue().set(
+            "active-jti:" + user.getId(),
+            jti,
+            Duration.ofDays(7)
+            );
+        // 접근 과 redis 연결 나
+        // 리프레시 와 redis 연결 가
+        
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+        
+        redisTemplate.delete("refresh:" + user.getId()); // 기존 세션 제거 (명확하게)
+
+        redisTemplate.opsForValue().set( // 새 세션 저장
+            "refresh:" + user.getId(),
+            refreshToken,
+            Duration.ofDays(7)
+        );
+        // 리프레시 와 redis 연결 나
+        
         return new LoginResponse(accessToken, "Bearer");
     }
 
     // 내 정보 조회
     public UserResponse getMe(Long userId) {
 
-        User user = getUser(userId);
+        User user = userRepository.findById(userId)
+            .orElseThrow();
 
         return new UserResponse(user.getId(), user.getUsername());
     }

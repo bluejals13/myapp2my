@@ -6,80 +6,99 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 토큰 검증 필터
 
     private final JwtProvider jwtProvider;
+    private final TokenBlacklistService tokenBlacklistService;
+    private final RedisTemplate<String, String> redisTemplate; // 🔥 추가
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
-        
+
         String path = request.getServletPath();
 
-        // 🔥 로그인/회원가입은 JWT 검사 자체를 안 함
         if (path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
-      
-        // 선 실행 토큰 생성 / 등록
-        try {
-            //System.out.println("JWT FILTER START"); //
-            
-            String header = request.getHeader("Authorization");
-            
-            //System.out.println("HEADER = " + header); //
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+        try {
+            String header = request.getHeader("Authorization");
+
+            if (header == null || !header.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String token = header.substring(7);
+            System.out.println("TOKEN CHECK: " + token);
+            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));
+
+            // 1. 블랙리스트 검사
+            if (tokenBlacklistService.isBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            // 2. JWT 검증
+            if (!jwtProvider.validateToken(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                 return;
+            }
+            
+                Long userId = jwtProvider.getUserId(token);
+                String tokenJti = jwtProvider.getJti(token); // 🔥 중요
+
+                // 3. Redis의 현재 활성 세션 조회
+                String activeJti = redisTemplate.opsForValue()
+                        .get("active-jti:" + userId);
+            
+            // active-jti 없으면 실패
+            if (activeJti == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+            
+            // 현재 활성 토큰이 아니면 실패
+            if (!tokenJti.equals(activeJti)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+                // 4. 인증 성공
+                CustomUserPrincipal principal = new CustomUserPrincipal(userId);
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                principal,
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            
+
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        String token = header.substring(7);
-
-        //System.out.println("VALID = " + jwtProvider.validateToken(token)); //
-
-        if (token != null && jwtProvider.validateToken(token)) {
-
-            Long userId = jwtProvider.getUserId(token);
-
-            CustomUserPrincipal principal = new CustomUserPrincipal(userId);
-
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            principal,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                    );
-
-            //System.out.println("USER ID = " + userId); //
-
-            SecurityContextHolder.getContext().setAuthentication(auth);
-           }
-
-           } catch (Exception e) {
-
-            SecurityContextHolder.clearContext();
-                // 🔥 선택: 완전 차단하려면 아래 활성화
-                //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                //return;
-        }
-        //System.out.println("AUTH = "+ SecurityContextHolder.getContext().getAuthentication());
 
         filterChain.doFilter(request, response);
     }

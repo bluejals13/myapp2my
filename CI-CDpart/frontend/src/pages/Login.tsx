@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { apiFetch } from "../api";
 import { useAuth } from "../auth/AuthContext";
 
 import { loginSchema } from "../auth/auth.schema";
-import { loginResponseSchema, type LoginResponse } from "../auth/auth.response";
 
 import "./Auth.css";
 
@@ -18,8 +18,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    // 1. zod validation
-    const result = loginSchema.safeParse({ username, password });
+      const result = loginSchema.safeParse({
+        username,
+        password,
+        });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -37,14 +39,13 @@ export default function Login() {
       setErrorMessage("");
 
       // 2. API 호출 (POST + body 필수)
-      const data = await apiFetch<LoginResponse>(
-        "/api/auth/login",
-        loginResponseSchema,
-        {
-          method: "POST",
-          body: JSON.stringify(result.data),
-        }
-      );
+    const data = await apiFetch<{ accessToken: string }>(
+      "/api/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify(result.data),
+      }
+    );
 
       // 3. login (token 저장 + /me 호출)
       await login(data.accessToken);
@@ -52,8 +53,12 @@ export default function Login() {
       // 4. 이동
       navigate("/main");
 
-    } catch {
-      setErrorMessage("로그인 실패");
+    } catch (e: any) {
+        setErrorMessage(
+          e?.message === "INVALID_CREDENTIALS"
+            ? "아이디 또는 비밀번호가 틀렸습니다"
+            : "로그인 실패"
+        );
     } finally {
       setIsLoading(false);
     }

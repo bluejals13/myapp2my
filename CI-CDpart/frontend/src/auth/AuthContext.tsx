@@ -1,6 +1,7 @@
+// AuthContext.tsx UI 상태
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../api";
-import { authStorage } from "./auth.service";
+import { authStorage } from "./auth.storage";
 
 export type User = {
   id: number;
@@ -11,57 +12,56 @@ type AuthContextType = {
   token: string | null;
   user: User | null;
   isLoggedIn: boolean;
+  isLoading: boolean;   // ← 추가
 
   login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(() =>
-    authStorage.getToken()
-  );
-
+  const [token, setToken] = useState<string | null>(authStorage.get());
   const [user, setUser] = useState<User | null>(null);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   const isLoggedIn = !!token;
 
-  // /me 호출
   const refreshUser = async () => {
-    if (!token) return;
-
     try {
       const data = await apiFetch<User>("/api/users/me");
-      // console.log(data);
       setUser(data);
     } catch {
-      setUser(null);
+      logout();
     }
   };
 
-  // login
   const login = async (newToken: string) => {
-    setToken(newToken);
     authStorage.set(newToken);
-
-    await refreshUser();
+    setToken(newToken);
+    
+    const me = await apiFetch<User>("/api/users/me");
+    
+    setUser(me);
   };
 
-  // logout
   const logout = () => {
+    authStorage.clear();
     setToken(null);
     setUser(null);
-    authStorage.clear();
   };
 
-  // 앱 시작 시 자동 user 복구
   useEffect(() => {
-    if (token) {
-      refreshUser();
-    }
-  }, [token]);
+    const init = async () => {
+      if (authStorage.get()) {
+        await refreshUser();
+      }
+      setIsLoading(false);
+    };
+
+    init();
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -69,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         token,
         user,
         isLoggedIn,
+        isLoading,   // ← 이거 필수
         login,
         logout,
         refreshUser,

@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CustomUserPrincipal {
 
-    private Long userId;
+    private final Long userId;
 }

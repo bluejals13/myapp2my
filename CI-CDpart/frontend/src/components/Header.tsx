@@ -4,7 +4,11 @@ import { useAuth } from "../auth/AuthContext";
 export default function Header() {
   const navigate = useNavigate();
   const { user, logout, isLoggedIn } = useAuth();
-
+  const handleLogout = () => {
+    logout();
+    requestAnimationFrame(() => navigate("/login"));
+    };
+  
   return (
     <header style={{ padding: 12, borderBottom: "1px solid #ddd" }}>
       <nav style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -21,15 +25,10 @@ export default function Header() {
             <Link to="/dashboard">Dashboard</Link>
 
             <span style={{ marginLeft: "auto" }}>
-              {user?.username}님
+              {user ? `${user.username}님` : ""}
             </span>
 
-            <button
-              onClick={() => {
-                logout();
-                navigate("/login");
-              }}
-            >
+            <button onClick={handleLogout}>
               로그아웃
             </button>
           </>

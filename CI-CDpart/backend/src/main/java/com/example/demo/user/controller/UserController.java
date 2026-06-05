@@ -1,11 +1,13 @@
 package com.example.demo.user.controller;
 
 import com.example.demo.user.dto.*;
-import com.example.demo.user.security.CustomUserPrincipal;
+import com.example.demo.user.security.AuthService;
 import com.example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import com.example.demo.user.security.CustomUserPrincipal;
 
 @RestController
 @RequestMapping("/api")
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     // 회원가입
     @PostMapping("/auth/signup")
@@ -28,13 +31,18 @@ public class UserController {
 
     // 내 정보 조회 (JWT 필요)
     @GetMapping("/users/me")
-    public UserResponse getMe(
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
-        //System.out.println("PRINCIPAL = " + principal);
+    public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
+        System.out.println("PRINCIPAL = " + principal.getUserId());
         return userService.getMe(principal.getUserId());
     }
-
+    
+    // 리프레시 와 redis 연결 가
+    @PostMapping("/auth/refresh")
+    public TokenResponse refresh(@RequestBody RefreshRequest req) {
+        System.out.println("REQ = " + req);        
+        return authService.refresh(req.getRefreshToken());
+    }
+    
     // 비밀번호 변경 (JWT 필요)
     @PatchMapping("/users/me/password")
     public void updatePassword(

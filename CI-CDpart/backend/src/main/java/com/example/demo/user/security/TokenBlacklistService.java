@@ -1,0 +1,42 @@
+package com.example.demo.user.security;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+
+import com.example.demo.user.jwt.JwtProvider;
+
+@Service
+@RequiredArgsConstructor
+public class TokenBlacklistService {    // 이미 로그인 된 계정 에 로그인 불가 만드는 파일
+
+    private final RedisTemplate<String, String> redisTemplate;
+    private final JwtProvider jwtProvider;
+
+    // blacklist 등록
+    public void blacklist(String token) {
+        
+        long remain =
+        jwtProvider.parseClaims(token)
+                   .getExpiration()
+                   .getTime()
+        - System.currentTimeMillis();
+
+        
+        String jti = jwtProvider.getJti(token);
+        redisTemplate.opsForValue().set(
+                "blacklist:" + jti,
+                "true",
+                Duration.ofMillis(remain)
+        );
+    }
+
+    // 체크
+    public boolean isBlacklisted(String token) {
+        String jti = jwtProvider.getJti(token);
+
+    return redisTemplate.hasKey("blacklist:" + jti);
+    }
+}

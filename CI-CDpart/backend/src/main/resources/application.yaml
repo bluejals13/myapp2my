@@ -1,8 +1,8 @@
 spring:
-  security:
-    user:
-      name: disabled
-      password: disabled
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
 
 jwt:
   secret: this_is_a_very_long_secret_key_for_jwt_signing_123456

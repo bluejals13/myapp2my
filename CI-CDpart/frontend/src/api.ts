@@ -1,11 +1,11 @@
-import { z } from "zod";
+// api.ts HTTP만
+import { authStorage } from "./auth/auth.storage";
 
 export async function apiFetch<T>(
   url: string,
-  schema?: z.ZodSchema<T>,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem("token");
+  const token = authStorage.get();
 
   const headers = new Headers(options.headers);
 
@@ -13,9 +13,10 @@ export async function apiFetch<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const isFormData = options.body instanceof FormData;
-
-  if (!isFormData && !headers.has("Content-Type")) {
+  if (
+    !(options.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -24,21 +25,16 @@ export async function apiFetch<T>(
     headers,
   });
 
+  // body 없을 수도 있음 (204 대응)
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
   if (!res.ok) {
-    throw new Error("API Error");
+    throw {
+      status: res.status,
+      data,
+    };
   }
 
-  const data = await res.json();
-
-  if (schema) {
-  const result = schema.safeParse(data);
-
-    if (!result.success) {
-      console.error("Zod Error:", result.error.flatten());
-      throw new Error("Response schema mismatch");
-    }
-    return result.data;
-  }
-
-  return data as T;
+  return data;
 }

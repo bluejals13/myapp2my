@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.user.jwt.JwtProvider;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
 import org.springframework.web.cors.CorsConfiguration;
@@ -28,15 +30,22 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig {         // 기본 접근 보안설정
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtProvider jwtProvider;
+    private final TokenBlacklistService tokenBlacklistService;
+    private final RedisTemplate<String, String> redisTemplate;
+    
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate);
+        }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOriginPatterns(List.of("https://*.trycloudflare.com"));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -48,26 +57,30 @@ public class SecurityConfig {
 
     @Bean // 보안 필터 체인 permitall 과 authenticated 등 구별
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        
         return http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .formLogin(AbstractHttpConfigurer::disable)   // 🔥 추가
+            .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
+            
             .authorizeHttpRequests(auth -> auth
                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                .requestMatchers("/api/auth/**").permitAll()
                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-               .requestMatchers("/actuator/prometheus").permitAll()
+               .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            
             .exceptionHandling(ex -> ex
-            .authenticationEntryPoint((req, res, e) -> {
-                e.printStackTrace();
-                res.setStatus(401);
+                .authenticationEntryPoint((req, res, e) -> {
+                    res.setContentType("application/json");
+                    res.setStatus(401);
+                    res.getWriter().write("{\"success\": false, \"code\": \"UNAUTHORIZED\"}");
             })
             .accessDeniedHandler((req, res, e) -> {
                 e.printStackTrace();
@@ -76,7 +89,6 @@ public class SecurityConfig {
             )
             .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
