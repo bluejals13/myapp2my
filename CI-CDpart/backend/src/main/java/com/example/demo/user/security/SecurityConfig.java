@@ -30,7 +30,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig {         // 기본 접근 보안설정
 
     private final JwtProvider jwtProvider;
     private final TokenBlacklistService tokenBlacklistService;
