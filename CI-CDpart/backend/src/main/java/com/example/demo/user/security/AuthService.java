@@ -24,6 +24,10 @@ public class AuthService {
 
     public TokenResponse refresh(String refreshToken) {
 
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
+            }
+
         // 0. parse once
         Claims claims = jwtProvider.parseClaims(refreshToken);
 
