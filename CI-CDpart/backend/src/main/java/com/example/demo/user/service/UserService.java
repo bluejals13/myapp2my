@@ -87,7 +87,7 @@ public class UserService {
         User user = userRepository.findById(userId)
             .orElseThrow();
 
-        return new UserResponse(user);
+        return new UserResponse(user.getId(), user.getUsername());
     }
 
     // 비밀번호 변경
