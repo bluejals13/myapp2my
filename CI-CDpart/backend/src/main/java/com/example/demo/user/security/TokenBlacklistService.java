@@ -29,7 +29,7 @@ public class TokenBlacklistService {
         redisTemplate.opsForValue().set(
                 "blacklist:" + jti,
                 "true",
-                Duration.ofMinutes(remain)
+                Duration.ofMillis(remain)
         );
     }
 
