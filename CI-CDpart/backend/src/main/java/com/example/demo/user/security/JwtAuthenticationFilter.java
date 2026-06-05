@@ -69,6 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 // 3. Redis의 현재 활성 세션 조회
                 String activeJti = redisTemplate.opsForValue()
                         .get("active-jti:" + userId);
+            
             // active-jti 없으면 실패
             if (activeJti == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -80,7 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-                // 인증 성공
+                // 4. 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
                 UsernamePasswordAuthenticationToken auth =
@@ -91,7 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+            
 
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
