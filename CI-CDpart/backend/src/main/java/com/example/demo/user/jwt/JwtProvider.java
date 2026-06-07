@@ -2,7 +2,7 @@ package com.example.demo.user.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;    // jwt 서명 용 보안 키 와 jjwt
-import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct; // 빈 생성 후 초기화 : 보안 키 검증용
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
