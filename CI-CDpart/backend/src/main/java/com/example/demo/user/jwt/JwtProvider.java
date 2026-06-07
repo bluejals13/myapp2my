@@ -1,15 +1,15 @@
 package com.example.demo.user.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.Keys;    // jwt 서명 용 보안 키 와 jjwt
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
-import java.util.UUID;
+import java.security.Key;     // 보안 키 객체
+import java.util.Date;        // 만료 날짜
+import java.util.UUID;        // 만료 jti
 
 @Component
 public class JwtProvider {    // 각 토큰 제공 파일
