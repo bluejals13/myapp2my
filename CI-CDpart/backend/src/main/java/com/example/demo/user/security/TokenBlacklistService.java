@@ -10,7 +10,7 @@ import com.example.demo.user.jwt.JwtProvider;
 
 @Service
 @RequiredArgsConstructor
-public class TokenBlacklistService {    // 이미 로그인 된 계정 에 로그인 불가 만드는 파일
+public class TokenBlacklistService {    // 각 계정의 리프레시 토큰 내부 각 항목, 예) 만료 시간, 토큰 파서 등
 
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtProvider jwtProvider;
