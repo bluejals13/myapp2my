@@ -16,7 +16,7 @@ import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {    // 리프레시 토큰 생성 파일
+public class AuthService {    // 리프레시 토큰 로직 관리 파일
 
     private final JwtProvider jwtProvider;
     private final RedisTemplate<String, String> redisTemplate;
@@ -24,7 +24,7 @@ public class AuthService {    // 리프레시 토큰 생성 파일
 
     public TokenResponse refresh(String refreshToken) {
 
-        if (!jwtProvider.validateToken(refreshToken)) {
+        if (!jwtProvider.validateToken(refreshToken)) {        // jwt 토큰 없으면 버림
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
             }
 
@@ -33,7 +33,7 @@ public class AuthService {    // 리프레시 토큰 생성 파일
 
         String type = claims.get("type", String.class);
 
-        if (!"refresh".equals(type)) {
+        if (!"refresh".equals(type)) {                        // 타입 리프레시 동일x 버림
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
             }
 
@@ -44,7 +44,7 @@ public class AuthService {    // 리프레시 토큰 생성 파일
         String saved = redisTemplate.opsForValue()
                 .get("refresh:" + userId);
 
-        // 3. 검증
+        // 3. 검증 null 값 이나 혹은 없는 경우 거부
         if (saved == null || !saved.equals(refreshToken)) {
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
         }
