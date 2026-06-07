@@ -44,7 +44,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
             .claim("username", username)
             .setIssuedAt(now)
             .setExpiration(expiry)
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
             .compact();
 }
     // 1. 리프레시 토큰 생성    
@@ -60,7 +60,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
             .claim("type", "refresh")
             .setIssuedAt(now)
             .setExpiration(expiry)
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
             .compact();
 }
     
