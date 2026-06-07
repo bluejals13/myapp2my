@@ -1,18 +1,18 @@
 package com.example.demo.user.security;
 
 import com.example.demo.user.jwt.JwtProvider;
-import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterChain;                // 서브렛 http 요청 가로체기 및 jwt 검사
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;             // 생성자 주입 자동 생성
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;    // jwt 사용자 정보 추출 후 생성
+import org.springframework.security.core.authority.SimpleGrantedAuthority;        // 권한 처리
+import org.springframework.security.core.context.SecurityContextHolder;                    // 보안 문자열 보관
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.filter.OncePerRequestFilter;    // 요청 당 1회 실행 필터
+import org.springframework.data.redis.core.RedisTemplate;    // redis 템플릿 으로 캐시 운용
 
 import java.io.IOException;
 import java.util.List;
