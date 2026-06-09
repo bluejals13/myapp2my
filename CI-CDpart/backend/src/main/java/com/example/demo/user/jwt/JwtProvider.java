@@ -41,7 +41,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
     return Jwts.builder()
             .setSubject(String.valueOf(userId))
             .setId(jti) // 🔥 핵심
-            .claim("username", username)
+            .claim("username", username)    // 나중에 변경 >    .claim("role", role)   .claim("type", "access")
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(key, SignatureAlgorithm.HS256)
