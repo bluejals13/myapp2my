@@ -101,6 +101,22 @@ public class UserService {
         }
 
         user.updatePassword(passwordEncoder.encode(req.password()));
+        
+        if (						// 위의 도메인 User 부분 정리 후 쓸 것
+            tokenIssuedAt.isBefore(
+                user.getPasswordChangedAt()
+                )
+            ) {
+        reject();
+        }
+
+        redisTemplate.delete(			// 기존 접근 토큰 과 해당 유저id 제거
+            "active-jti:" + userId
+            );
+
+        redisTemplate.delete(			// 기존 리프레시 토큰 과 해당 유저id 제거
+            "refresh:" + userId
+            );
     }
 
     // 내부 공통 메서드
