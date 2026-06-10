@@ -13,7 +13,9 @@ import java.util.UUID;        // 만료 jti
 
 @Component
 public class JwtProvider {    // 각 토큰 제공 파일
-
+    
+    //    /* application.yaml 부분의 환경 변수 일치 확인 할 것
+    
     // 환경 변수 는 나중에 고려 1.
     @Value("${jwt.secret}")
     private String secretKey;
@@ -21,6 +23,8 @@ public class JwtProvider {    // 각 토큰 제공 파일
     // 환경 변수 는 나중에 고려 2.
     @Value("${jwt.expiration}")
     private long expiration;
+    
+    //    */
     
         /* application.yaml 부분의 환경 변수 일치 확인 할 것
 
