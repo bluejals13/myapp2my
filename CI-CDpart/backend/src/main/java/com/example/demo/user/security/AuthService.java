@@ -53,7 +53,7 @@ public class AuthService {    // 리프레시 토큰 로직 관리 파일
         User user = userRepository.findById(userId)
                 .orElseThrow();
 
-        // 5. 새로운 Access Token 발급
+        // 5. 새로운 Access Token 발급 username -> role 변경 예정
         String newAccessToken =
             jwtProvider.createAccessToken(user.getId(), user.getUsername());
 
