@@ -51,7 +51,7 @@ public class AuthService {    // 리프레시 토큰 로직 관리 파일
 
         // 4. 유저 조회
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow();    //    (() ->    new BadCredentialsException("USER_NOT_FOUND") );
 
         // 5. 새로운 Access Token 발급 username -> role 변경 예정
         String newAccessToken =
