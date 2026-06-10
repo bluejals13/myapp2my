@@ -114,4 +114,13 @@ public class JwtProvider {    // 각 토큰 제공 파일
             return false;
         }
     }
+    
+        /*
+    // 5. role 추출
+    // JwtAuthenticationFilter 에서 Authority 생성 시 사용
+    public String getRole(String token) {
+        return parseClaims(token)
+            .get("role", String.class);
+    }
+    //    */
 }
