@@ -16,19 +16,13 @@ import lombok.extern.slf4j.Slf4j;    // 기본 로거 호출용
 @Component
 public class JwtProvider {    // 각 토큰 제공 파일
     
-    //    /* application.yaml 부분의 환경 변수 일치 확인 할 것
+    // application.yaml 부분의 환경 변수 일치 확인 할 것
     
-    // 환경 변수 는 나중에 고려 1.
     @Value("${jwt.secret}")
     private String secretKey;
 
-    // 환경 변수 는 나중에 고려 2.
     @Value("${jwt.expiration}")
     private long expiration;
-    
-    //    */
-    
-        /* application.yaml 부분의 환경 변수 일치 확인 할 것
 
     @Value("${jwt.access-expiration}")
     private long accessExpiration;
@@ -36,17 +30,17 @@ public class JwtProvider {    // 각 토큰 제공 파일
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
     
-    //    */
+    //
     
     private Key key;
     // secretKey 길이 32바이트 미만이면 런타임 에러
     @PostConstruct
-    public void init() { //   /*     //Secret Key 검증 부분
+    public void init() {            //Secret Key 검증 부분
         if (secretKey == null || secretKey.length() < 32) {
             throw new IllegalStateException(
                 "JWT Secret Key must be at least 32 characters."
                 );
-            }            //    */
+            }  
 
         this.key = Keys.hmacShaKeyFor(
             secretKey.getBytes(StandardCharsets.UTF_8)
@@ -54,7 +48,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
     }
 
     // 1. 접근 토큰 생성
-    public String createAccessToken(Long userId, String username) {
+    public String createAccessToken(Long userId, String username) {    // String ( username > role ) 으로 나중 role 추가 시
     Date now = new Date();
     Date expiry = new Date(now.getTime() + expiration);
 
@@ -63,9 +57,9 @@ public class JwtProvider {    // 각 토큰 제공 파일
     return Jwts.builder()
             .setSubject(String.valueOf(userId))
             .setId(jti) // 🔥 핵심
-            .claim("username", username)    /* 나중에 변경 
-            .claim("role", role)
-            .claim("type", "access") // */
+            .claim("username", username) 
+            //.claim("role", role)
+            //.claim("type", "access")
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
@@ -121,12 +115,11 @@ public class JwtProvider {    // 각 토큰 제공 파일
         }
     }
     
-        /*
-    // 5. role 추출
+    // 5. role 추출 username -> role 변경 예정
     // JwtAuthenticationFilter 에서 Authority 생성 시 사용
     public String getRole(String token) {
         return parseClaims(token)
             .get("role", String.class);
     }
-    //    */
+    
 }
