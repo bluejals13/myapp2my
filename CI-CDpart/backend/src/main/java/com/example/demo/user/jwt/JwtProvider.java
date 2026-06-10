@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;     // 보안 키 객체
 import java.util.Date;        // 만료 날짜
 import java.util.UUID;        // 만료 jti
+import lombok.extern.slf4j.Slf4j;    // 기본 로거 호출용
 
+@Slf4j
 @Component
 public class JwtProvider {    // 각 토큰 제공 파일
     
@@ -111,6 +113,10 @@ public class JwtProvider {    // 각 토큰 제공 파일
             parseClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            
+            // 필요 시 로그
+            log.warn("JWT validation failed: {}", e.getMessage());
+            
             return false;
         }
     }
