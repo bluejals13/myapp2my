@@ -22,16 +22,29 @@ public class User {
 
 	private String password;
 
+    private LocalDateTime passwordChangedAt;	// 비번 변경 부분
+	
 	public User(String username, String password) {
 		this.username = username;
 		this.password = password;
+        LocalDateTime passwordChangedAt		// 비번 변경 부분
+    ) {
+        this.username = username;
+        this.password = password;
+        this.passwordChangedAt = passwordChangedAt;	// 비번 변경 부분
+    }
 	}
 
 	public static User create(String username, String encodedPassword) {
-		return new User(username, encodedPassword);
+		return new User(username, encodedPassword, LocalDateTime.now() // 날짜시간 기록);
 	}
 
 	public void updatePassword(String encodedPassword) {
 		this.password = encodedPassword;
+        this.passwordChangedAt = LocalDateTime.now();	// 날짜시간 기록
 	}
+	
+    public LocalDateTime getPasswordChangedAt() {
+        return passwordChangedAt;				// 비번 변경 부분
+    }
 }
