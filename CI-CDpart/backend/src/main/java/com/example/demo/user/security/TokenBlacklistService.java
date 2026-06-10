@@ -37,6 +37,6 @@ public class TokenBlacklistService {    // 각 계정의 리프레시 토큰 내
     public boolean isBlacklisted(String token) {
         String jti = jwtProvider.getJti(token);
 
-    return redisTemplate.hasKey("blacklist:" + jti);
+    return Boolean.TRUE.equals( redisTemplate.hasKey("blacklist:" + jti) );
     }
 }
