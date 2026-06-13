@@ -1,11 +1,13 @@
 // AuthContext.tsx UI 상태
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../api";
-import { authStorage } from "./auth.storage";
+import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 
-export type User = {
+export type User = {	// 👈 RBAC 추가 수정 부분
   id: number;
   username: string;
+  roles: string[];        // 👈 추가 (ADMIN, USER, MODERATOR)
+  permissions: string[];  // 👈 선택 (USER_READ, USER_WRITE ...)
 };
 
 type AuthContextType = {
@@ -17,6 +19,9 @@ type AuthContextType = {
   login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+
+  hasRole: (role: string) => boolean;           // 👈 추가
+  hasPermission: (p: string) => boolean;        // 👈 추가
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -28,9 +33,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const isLoggedIn = !!token;
 
+const hasRole = (role: string) =>		// 👈 추가
+  (user?.roles ?? []).includes(role);
+
+const hasPermission = (p: string) =>		// 👈 추가
+  (user?.permissions ?? []).includes(p);
+
   const refreshUser = async () => {
     try {
-      const data = await apiFetch<User>("/api/users/me");
+      const data = await apiWithAuth<User>("/api/users/me");
       setUser(data);
     } catch {
       logout();
@@ -41,9 +52,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authStorage.set(newToken);
     setToken(newToken);
     
-    const me = await apiFetch<User>("/api/users/me");
-    
+  try {
+    const me = await apiWithAuth<User>("/api/users/me");
     setUser(me);
+  } catch (e) {
+    authStorage.clear();
+    setToken(null);
+    setUser(null);
+    throw e;
+  }
   };
 
   const logout = () => {
@@ -52,16 +69,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  useEffect(() => {
-    const init = async () => {
+// 초기 로그인 복구
+useEffect(() => {
+  const init = async () => {
+    try {
       if (authStorage.get()) {
         await refreshUser();
       }
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
-    init();
-  }, []);
+  init();
+}, []);
+
+// refresh 실패 로그아웃 동기화
+useEffect(() => {
+  const handler = () => {
+    logout();
+  };
+
+  window.addEventListener("auth:logout", handler);
+
+  return () => {
+    window.removeEventListener("auth:logout", handler);
+  };
+}, []);
 
   return (
     <AuthContext.Provider
@@ -73,6 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         refreshUser,
+        hasRole,		// 👈 추가
+        hasPermission,	// 👈 추가
       }}
     >
       {children}
