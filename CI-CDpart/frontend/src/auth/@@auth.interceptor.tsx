@@ -1,6 +1,6 @@
 // auth.interceptor.tsx 401 retry
 import { apiFetch } from "../api";
-import { authStorage } from "./auth.storage";
+import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { refreshToken } from "./@@auth.manager";
 
 export async function apiWithAuth<T>(
@@ -24,7 +24,17 @@ export async function apiWithAuth<T>(
 
     authStorage.set(newToken);
 
-    // retry 1번만
-    return await apiFetch<T>(url, options);
+  // retry 1번만  
+  const headers = new Headers(options.headers);
+
+  headers.delete("Authorization");
+
+  headers.set("Authorization", `Bearer ${newToken}`);
+
+  return await apiFetch<T>(url, {
+    ...options,
+    headers,
+    _retry: true,
+    } as any);
   }
 }
