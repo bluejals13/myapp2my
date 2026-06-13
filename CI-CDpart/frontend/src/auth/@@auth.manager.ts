@@ -1,8 +1,10 @@
 // auth.manager.ts refresh + queue
-import { authStorage } from "./auth.storage";
+import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 
 let isRefreshing = false;
-let queue: ((token: string | null) => void)[] = [];
+type RefreshResolver = (token: string | null) => void;
+
+let queue: RefreshResolver[] = [];
 
 export async function refreshToken(): Promise<string | null> {
   if (isRefreshing) {
@@ -24,15 +26,13 @@ export async function refreshToken(): Promise<string | null> {
     const data = await res.json();
     const newToken = data.accessToken;
 
-    authStorage.set(newToken);
-
     queue.forEach((cb) => cb(newToken));
-    queue = [];
+    queue.length = 0;
 
     return newToken;
   } catch (e) {
     queue.forEach((cb) => cb(null));
-    queue = [];
+    queue.length = 0;
 
     authStorage.clear();
     window.dispatchEvent(new Event("auth:logout"));
