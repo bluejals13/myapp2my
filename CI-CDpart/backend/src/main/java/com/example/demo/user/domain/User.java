@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -13,38 +15,35 @@ import lombok.AccessLevel;
 @AllArgsConstructor
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(unique = true)
-	private String username;
+    @Column(unique = true)
+    private String username;
 
-	private String password;
+    private String password;
 
-    private LocalDateTime passwordChangedAt;	// 비번 변경 부분
-	
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-        LocalDateTime passwordChangedAt		// 비번 변경 부분
-    ) {
+    private LocalDateTime passwordChangedAt; // 비번 변경 시간
+
+    // 기본 생성자 (핵심 수정)
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.passwordChangedAt = passwordChangedAt;	// 비번 변경 부분
+        this.passwordChangedAt = null;
     }
-	}
 
-	public static User create(String username, String encodedPassword) {
-		return new User(username, encodedPassword, LocalDateTime.now() // 날짜시간 기록);
-	}
+    // 팩토리 메서드
+    public static User create(String username, String encodedPassword) {
+        return new User(username, encodedPassword);
+    }
 
-	public void updatePassword(String encodedPassword) {
-		this.password = encodedPassword;
-        this.passwordChangedAt = LocalDateTime.now();	// 날짜시간 기록
-	}
-	
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+        this.passwordChangedAt = LocalDateTime.now();
+    }
+
     public LocalDateTime getPasswordChangedAt() {
-        return passwordChangedAt;				// 비번 변경 부분
+        return passwordChangedAt;
     }
 }
