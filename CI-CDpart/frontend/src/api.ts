@@ -1,5 +1,5 @@
 // api.ts HTTP만
-import { authStorage } from "./auth/auth.storage";
+import { authStorage } from "./auth/auth.storage";	// jwt 토큰 키 get, set, clear
 
 export async function apiFetch<T>(
   url: string,
@@ -27,7 +27,14 @@ export async function apiFetch<T>(
 
   // body 없을 수도 있음 (204 대응)
   const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
+  
+  let data = null;
+
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null;
+  }
 
   if (!res.ok) {
     throw {
