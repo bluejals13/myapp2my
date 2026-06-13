@@ -43,8 +43,9 @@ const hasPermission = (p: string) =>		// 👈 추가
     try {
       const data = await apiWithAuth<User>("/api/users/me");
       setUser(data);
-    } catch {
-      logout();
+    } catch (e: any) {
+    	if (e?.status === 401) {
+      	logout();
     }
   };
 
