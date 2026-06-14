@@ -4,6 +4,10 @@ import com.example.demo.user.dto.*;
 import com.example.demo.user.security.AuthService;
 import com.example.demo.user.service.UserService;
 
+import java.util.Arrays;
+import java.util.Optional;
+import jakarta.servlet.http.Cookie;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
