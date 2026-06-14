@@ -63,8 +63,10 @@ public class UserController {
 
         Cookie[] cookies = request.getCookies();
 
-        String refreshToken = (cookies == null) ? null :
-                Arrays.stream(cookies)
+        String refreshToken = 
+            Optional.ofNullable(request.getCookies())
+                .map(Arrays::stream)
+                .orElseGet(Stream::empty)
                         .filter(c -> "refreshToken".equals(c.getName()))
                         .map(Cookie::getValue)
                         .findFirst()
