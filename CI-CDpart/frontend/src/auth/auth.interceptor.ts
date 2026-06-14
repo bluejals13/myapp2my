@@ -27,5 +27,9 @@ export async function apiWithAuth<T>(
 
     headers.set("Authorization", `Bearer ${newToken}`);
 
+    return apiFetch<T>(url, {
+  ...options,
+  headers,
+});
   }
 }
