@@ -31,8 +31,24 @@ public class UserController {
 
     // 로그인
     @PostMapping("/auth/login")
-    public LoginResponse login(@RequestBody LoginRequest req) {
-        return userService.login(req);
+    public LoginResponse login(
+        @RequestBody LoginRequest req,
+        HttpServletResponse response
+        ) {
+           LoginResult result = userService.login(req);
+
+            Cookie cookie = new Cookie(
+            "refreshToken",
+            result.refreshToken()
+                );
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 7);
+        response.addCookie(cookie);
+        return new LoginResponse(
+            result.accessToken(),
+            "Bearer"
+            );
     }
 
     // 내 정보 조회 (JWT 필요)
