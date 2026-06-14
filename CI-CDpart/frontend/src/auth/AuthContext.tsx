@@ -52,18 +52,18 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
   const login = async (newToken: string) => {
-    authStorage.set(newToken);
-    setToken(newToken);
-    
+  authStorage.set(newToken);
+  setToken(newToken);
+
   try {
-    const me = await apiWithAuth<User>("/api/users/me");
-    setUser(me);
-  } catch (e) {
-    authStorage.clear();
-    setToken(null);
-    setUser(null);
-    throw e;
-  }
+      const me = await apiWithAuth<User>("/api/users/me");
+      setUser(me);
+    } catch (e) {
+      authStorage.clear();
+      setToken(null);
+      setUser(null);
+      throw e;
+    }
   };
 
   const logout = () => {
