@@ -1,7 +1,7 @@
 // auth.interceptor.tsx 401 retry
 import { apiFetch } from "../api";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
-import { refreshToken } from "./@@auth.manager";
+import { refreshToken } from "./auth.manager";
 
 export async function apiWithAuth<T>(
   url: string,
