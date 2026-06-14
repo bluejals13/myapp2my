@@ -1,6 +1,6 @@
 // AuthContext.tsx UI 상태
 import { createContext, useContext, useEffect, useState } from "react";
-import { apiFetch } from "../api";
+//import { apiFetch } from "../api";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { apiWithAuth } from "./auth.interceptor";
 
@@ -56,7 +56,7 @@ const hasPermission = (p: string) =>		// 👈 추가
   setToken(newToken);
 
   try {
-      const me = await apiFetch<User>("/api/users/me");
+      const me = await apiWithAuth<User>("/api/users/me");
       setUser(me);
     } catch (e) {
       authStorage.clear();
