@@ -5,6 +5,8 @@ import com.example.demo.user.security.AuthService;
 import com.example.demo.user.service.UserService;
 import com.example.demo.user.security.CustomUserPrincipal;
 
+import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.Arrays;
 
 import jakarta.servlet.http.Cookie;
