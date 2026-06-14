@@ -63,9 +63,8 @@ public class UserController {
     @PostMapping("/auth/refresh")
     public TokenResponse refresh(HttpServletRequest request) {
 
-        String refreshToken = Arrays.stream(
-                Optional.ofNullable(request.getCookies()).orElse(new Cookie[0])
-            )
+        String refreshToken = (cookies == null) ? null :
+            Arrays.stream(cookies)
             .filter(c -> "refreshToken".equals(c.getName()))
             .findFirst()
             .map(Cookie::getValue)
