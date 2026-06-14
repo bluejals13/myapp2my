@@ -25,9 +25,9 @@ export async function refreshToken(): Promise<string | null> {
     if (!res.ok) throw new Error("refresh failed");
 
     const data = await res.json();
-    const newToken = data.accessToken;
 
-    const newToken =  data?.accessToken || data?.data?.accessToken; // ✔️ 추가 (중요)
+    const newToken =  data?.accessToken || data?.data?.accessToken ||
+  null; // ✔️ 추가 (중요)
 
     queue.forEach((cb) => cb(newToken));
     queue.length = 0;
