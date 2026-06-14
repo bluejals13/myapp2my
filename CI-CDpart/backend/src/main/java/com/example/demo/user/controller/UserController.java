@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import jakarta.servlet.http.Cookie;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServlet.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
