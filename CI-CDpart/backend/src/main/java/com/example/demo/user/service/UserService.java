@@ -46,7 +46,7 @@ public class UserService {
     }
 
     // 로그인
-    public LoginResult login(LoginRequest req) {
+    public LoginResponse login(LoginRequest req) {
 
         User user = userRepository.findByUsername(req.username())
                 .orElseThrow(() -> new BadCredentialsException("INVALID_CREDENTIALS"));
