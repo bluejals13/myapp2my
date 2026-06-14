@@ -3,7 +3,7 @@ import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 
 let isRefreshing = false;
 // Promise<string>
-let  RefreshResolver = (token: string | null) => void;
+type RefreshResolver = (token: string | null) => void;
 
 let queue: RefreshResolver[] = [];
 
