@@ -85,7 +85,7 @@ public class UserService {
     public UserResponse getMe(Long userId) {
 
         User user = userRepository.findById(userId)
-            .orElseThrow();
+            .orElseThrow(() -> new UserNotFoundException("유저 없음"));
 
         return new UserResponse(user.getId(), user.getUsername());
     }
