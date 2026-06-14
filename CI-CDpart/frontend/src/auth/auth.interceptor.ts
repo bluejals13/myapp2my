@@ -21,7 +21,11 @@ export async function apiWithAuth<T>(
     authStorage.set(newToken);
 
     // retry 1번만 
-    
+    const headers = new Headers(options.headers ?? {});
+
+    headers.delete("Authorization");
+    headers.set("Authorization", `Bearer ${newToken}`);
+
     return apiFetch<T>(url, {
       ...options,
       headers,
