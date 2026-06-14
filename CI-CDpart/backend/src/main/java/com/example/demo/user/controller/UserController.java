@@ -77,6 +77,11 @@ public class UserController {
         if (refreshToken == null) {
             throw new RuntimeException("NO_REFRESH_TOKEN");
         }
+        try {
+            return ResponseEntity.ok(authService.refresh(refreshToken));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body("INVALID_REFRESH_TOKEN");
+        }
 
         return authService.refresh(refreshToken);
     }
