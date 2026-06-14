@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiWithAuth } from "../api/apiWithAuth";
+import { apiWithAuth } from "../api/auth.interceptor";
 import { useAuth } from "../auth/AuthContext";
 
 type MeResponse = {
