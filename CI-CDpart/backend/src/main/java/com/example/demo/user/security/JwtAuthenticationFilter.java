@@ -84,6 +84,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 // 4. 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
+//            List<SimpleGrantedAuthority> authorities =
+//        user.getRoles().stream()
+//                .flatMap(r -> r.getPermissions().stream())
+//                .map(p -> new SimpleGrantedAuthority(p.getName()))
+//                .distinct()
+//                .toList();
+
+
+            
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 principal,
