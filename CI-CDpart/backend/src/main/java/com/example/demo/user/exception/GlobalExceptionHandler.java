@@ -5,6 +5,7 @@ import com.example.demo.user.exception.DuplicateUserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.Map;
 
