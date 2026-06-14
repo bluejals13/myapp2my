@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../api";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
+import { apiWithAuth } from "../@@auth.interceptor";
 
 export type User = {	// 👈 RBAC 추가 수정 부분
   id: number;
@@ -46,6 +47,7 @@ const hasPermission = (p: string) =>		// 👈 추가
     } catch (e: any) {
     	if (e?.status === 401) {
       	logout();
+      }
     }
   };
 
