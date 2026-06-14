@@ -28,6 +28,8 @@ export async function refreshToken(): Promise<string | null> {
 
     const newToken =  data?.accessToken || data?.data?.accessToken || null; // ✔️ 추가 (중요)
 
+    authStorage.set(newToken);
+    
     queue.forEach((cb) => cb(newToken));
     queue.length = 0;
 
