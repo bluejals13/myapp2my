@@ -38,9 +38,22 @@ public class UserController {
     
     // 리프레시 와 redis 연결 가
     @PostMapping("/auth/refresh")
-    public TokenResponse refresh(@RequestBody RefreshRequest req) {
-        System.out.println("REQ = " + req);        
-        return authService.refresh(req.getRefreshToken());
+    public TokenResponse refresh(HttpServletRequest request) {
+
+        String refreshToken = Arrays.stream(
+                Optional.ofNullable(request.getCookies()).orElse(new Cookie[0])
+            )
+            .filter(c -> "refreshToken".equals(c.getName()))
+            .findFirst()
+            .map(Cookie::getValue)
+            .orElse(null);
+
+        System.out.println("refreshToken = " + refreshToken);
+
+        if (refreshToken == null) {
+            throw new RuntimeException("NO_REFRESH_TOKEN");
+        }
+        return authService.refresh(refreshToken);
     }
     
     // 비밀번호 변경 (JWT 필요)
