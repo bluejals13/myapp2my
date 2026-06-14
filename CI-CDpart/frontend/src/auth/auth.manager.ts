@@ -10,8 +10,8 @@ let queue: RefreshResolver[] = [];
 export async function refreshToken(): Promise<string | null> {
   if (isRefreshing) {
     return new Promise((resolve) => {
-      //queue.push(resolve);
-      queue.forEach((cb) => cb(null));
+      queue.push(resolve);
+      //queue.forEach((cb) => cb(null));
     });
   }
 
