@@ -5,17 +5,19 @@ import com.example.demo.user.security.AuthService;
 import com.example.demo.user.service.UserService;
 import com.example.demo.user.security.CustomUserPrincipal;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-import java.util.Arrays;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api")
@@ -31,62 +33,62 @@ public class UserController {
         return userService.signup(req);
     }
 
-    // 로그인
+    // 로그인 (쿠키 방식 refresh)
     @PostMapping("/auth/login")
     public LoginResponse login(
             @RequestBody LoginRequest req,
             HttpServletResponse httpResponse
     ) {
+
         LoginResult result = userService.login(req);
 
         Cookie cookie = new Cookie("refreshToken", result.refreshToken());
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setSecure(true); // HTTPS 환경
         cookie.setMaxAge(60 * 60 * 24 * 7);
+        cookie.setSecure(false); // 로컬이면 false, HTTPS면 true
 
         httpResponse.addCookie(cookie);
 
         return new LoginResponse(
                 result.accessToken(),
-                "Bearer"
+                result.grantType()
         );
     }
 
-    // 내 정보 조회
+    // refresh
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<?> refresh(HttpServletRequest request) {
+        try {
+
+            Cookie[] cookies = Optional
+                    .ofNullable(request.getCookies())
+                    .orElse(new Cookie[0]);
+
+            String refreshToken = Arrays.stream(cookies)
+                    .filter(c -> "refreshToken".equals(c.getName()))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+
+            if (refreshToken == null) {
+                return ResponseEntity.status(401).body("NO_REFRESH_TOKEN");
+            }
+
+            return ResponseEntity.ok(authService.refresh(refreshToken));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("INVALID_REFRESH_TOKEN");
+        }
+    }
+
+    // me
     @GetMapping("/users/me")
     public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
         return userService.getMe(principal.getUserId());
     }
 
-    // 리프레시 (쿠키 방식)
-    @PostMapping("/auth/refresh")
-    public TokenResponse refresh(HttpServletRequest request) {
-
-        Cookie[] cookies = request.getCookies();
-
-        String refreshToken = 
-            Optional.ofNullable(request.getCookies())
-                .map(Arrays::stream)
-                .orElseGet(Stream::empty)
-                        .filter(c -> "refreshToken".equals(c.getName()))
-                        .map(Cookie::getValue)
-                        .findFirst()
-                        .orElse(null);
-
-        if (refreshToken == null) {
-            throw new RuntimeException("NO_REFRESH_TOKEN");
-        }
-        try {
-            return ResponseEntity.ok(authService.refresh(refreshToken));
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body("INVALID_REFRESH_TOKEN");
-        }
-
-        return authService.refresh(refreshToken);
-    }
-
-    // 비밀번호 변경
+    // password change
     @PatchMapping("/users/me/password")
     public void updatePassword(
             @AuthenticationPrincipal CustomUserPrincipal principal,
