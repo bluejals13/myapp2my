@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+import FullPageSpinner from "../components/FullPageSpinner";
 import { useAuth } from "../auth/AuthContext";
 
 export default function AdminRoute() {	// 접근 admin 권한 없는 경우
