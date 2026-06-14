@@ -20,6 +20,15 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", e.getMessage()));
     }
 
+    // 게스트의 리프레시 계정 정보 me 오류
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentials(BadCredentialsException e) {
+        return ResponseEntity.status(401).body(Map.of(
+            "message", "UNAUTHORIZED",
+            "detail", e.getMessage()
+        ));
+    }
+
     // 나머지 모든 예외
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAll(Exception e) {
