@@ -27,7 +27,7 @@ export async function refreshToken(): Promise<string | null> {
     const data = await res.json();
     const newToken = data.accessToken;
 
-    authStorage.set(newToken); // ✔️ 추가 (중요)
+    const newToken =  data?.accessToken || data?.data?.accessToken; // ✔️ 추가 (중요)
 
     queue.forEach((cb) => cb(newToken));
     queue.length = 0;
