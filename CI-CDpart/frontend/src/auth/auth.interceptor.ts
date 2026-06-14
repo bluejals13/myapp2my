@@ -31,10 +31,8 @@ export async function apiWithAuth<T>(
 
   headers.set("Authorization", `Bearer ${newToken}`);
 
-  return await apiFetch<T>(url, {
-    ...options,
-    headers,
-    _retry: true,
-    } as any);
+  if (options.headers && (options as any)._retry) {
+      throw err;
+    }
   }
 }
