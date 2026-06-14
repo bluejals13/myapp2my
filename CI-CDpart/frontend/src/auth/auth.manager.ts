@@ -11,7 +11,6 @@ export async function refreshToken(): Promise<string | null> {
   if (isRefreshing) {
     return new Promise((resolve) => {
       queue.push(resolve);
-      //queue.forEach((cb) => cb(null));
     });
   }
 
@@ -28,15 +27,18 @@ export async function refreshToken(): Promise<string | null> {
     const data = await res.json();
     const newToken = data.accessToken;
 
+    authStorage.set(newToken); // ✔️ 추가 (중요)
+
     queue.forEach((cb) => cb(newToken));
     queue.length = 0;
 
     return newToken;
   } catch (e) {
+    authStorage.clear(); // ✔️ 안전 처리
+    
     queue.forEach((cb) => cb(null));
     queue.length = 0;
 
-    authStorage.clear();
     window.dispatchEvent(new Event("auth:logout"));
 
     return null;
