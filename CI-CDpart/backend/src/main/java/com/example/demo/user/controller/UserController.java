@@ -37,7 +37,7 @@ public class UserController {
         @RequestBody LoginRequest req,
         HttpServletResponse response
         ) {
-           LoginResult result = userService.login(req);
+           LoginResponse response = userService.login(req);
 
             Cookie cookie = new Cookie(
             "refreshToken",
