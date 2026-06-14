@@ -46,7 +46,7 @@ public class UserService {
     }
 
     // 로그인
-    public LoginResponse login(LoginRequest req) {
+    public LoginResult login(LoginRequest req) {
 
         User user = userRepository.findByUsername(req.username())
                 .orElseThrow(() -> new BadCredentialsException("INVALID_CREDENTIALS"));
@@ -78,7 +78,7 @@ public class UserService {
         );
         // 리프레시 와 redis 연결 나
         
-        return new LoginResponse(accessToken, "Bearer");
+        return new LoginResult(accessToken, "Bearer");
     }
 
     // 내 정보 조회
