@@ -78,7 +78,7 @@ public class UserService {
         );
         // 리프레시 와 redis 연결 나
         
-        return new LoginResult(accessToken, "Bearer");
+        return new LoginResult(accessToken, "Bearer", refreshToken);
     }
 
     // 내 정보 조회
