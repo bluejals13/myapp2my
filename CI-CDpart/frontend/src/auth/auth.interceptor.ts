@@ -23,7 +23,6 @@ export async function apiWithAuth<T>(
     // retry 1번만 
     const headers = new Headers(options.headers ?? {});
 
-    headers.delete("Authorization");
     headers.set("Authorization", `Bearer ${newToken}`);
 
     return apiFetch<T>(url, {
