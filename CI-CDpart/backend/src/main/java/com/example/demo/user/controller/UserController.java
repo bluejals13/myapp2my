@@ -43,6 +43,7 @@ public class UserController {
                 );
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setSecure(true); // HTTPS에서만 전송
         cookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(cookie);
         return new LoginResponse(
