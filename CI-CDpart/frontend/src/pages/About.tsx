@@ -21,7 +21,7 @@ export default function About() {
       try {
         setLoading(true);
 
-        const res = await apiWithAuth("/api/me"); 
+        const res = await apiWithAuth<MeResponse>("/api/users/me");
         setMe(res);
       } catch (e: any) {
         setError(e?.message ?? "유저 정보를 불러오지 못했습니다.");
