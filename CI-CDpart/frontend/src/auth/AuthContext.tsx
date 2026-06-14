@@ -34,8 +34,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const isLoggedIn = !!token;
 
-const hasRole = (role: string) =>		// 👈 추가
-  (user?.roles ?? []).includes(role);
+const hasRole = (role: string) =>       // 👈 추가
+  (user?.roles ?? []).some(r => r.toLowerCase() === role.toLowerCase());
 
 const hasPermission = (p: string) =>		// 👈 추가
   (user?.permissions ?? []).includes(p);
