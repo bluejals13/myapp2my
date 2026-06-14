@@ -21,15 +21,13 @@ export async function apiWithAuth<T>(
     authStorage.set(newToken);
 
     // retry 1번만  
-    const headers = new Headers(options.headers);
-
-    headers.delete("Authorization");
+    const headers = new Headers(options.headers || {});
 
     headers.set("Authorization", `Bearer ${newToken}`);
 
     return apiFetch<T>(url, {
-  ...options,
-  headers,
-});
+      ...options,
+      headers,
+    });
   }
 }
