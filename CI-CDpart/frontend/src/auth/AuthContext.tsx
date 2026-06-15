@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!token && !!user;
 
 const hasRole = (role: string) =>       // 👈 추가
   (user?.roles ?? []).some(r => r.toLowerCase() === role.toLowerCase());
@@ -46,7 +46,7 @@ const hasPermission = (p: string) =>		// 👈 추가
       setUser(data);
     } catch (e: any) {
     	if (e?.status === 401) {
-      	logout();
+      	await logout();
       }
     }
   };
@@ -70,7 +70,7 @@ const hasPermission = (p: string) =>		// 👈 추가
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
-    });
+    }); } catch{}
     
     authStorage.clear();
     setToken(null);
