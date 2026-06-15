@@ -19,10 +19,10 @@ export default function UserAdminPage() {
   const canUpdate = hasPermission("USER_UPDATE");
   const canDelete = hasPermission("USER_DELETE");
 
-  const [statusLoading, setStatusLoading] = useState<number | null>(null);
-  const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [statusLoading, setStatusLoading] = useState<number | null>(null);  // 상태 변경 시 버튼 잠금
+  const [actionLoading, setActionLoading] = useState<number | null>(null);  // 상태 삭제 시 버튼 잠금
   
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);      // 사용자 목록 객체
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,7 +116,7 @@ export default function UserAdminPage() {
             </div>
 
             <div className={styles.permissions}>
-              {user.permissions?.join(", ") || "-"}
+              {user.permissions?.join(", ") || "-"} /* 퍼미션 방어 코드 */
             </div>
 
             {(canUpdate || canDelete) && (
