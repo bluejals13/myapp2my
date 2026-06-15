@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { apiFetch } from "../api.ts";
+import { apiFetch } from "../api";
 import { signupSchema } from "../auth/auth.schema";
 
 import "./Auth.css";
