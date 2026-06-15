@@ -28,6 +28,9 @@ public class User {
 
     private LocalDateTime passwordChangedAt; // 비번 변경 시간
 
+    @Enumerated(EnumType.STRING)    // 유저 상태 어드민 관리 페이지 사용
+    private UserStatus status;
+
     // 기본 생성자 (핵심 수정)
     public User(String username, String password) {
         this.username = username;
