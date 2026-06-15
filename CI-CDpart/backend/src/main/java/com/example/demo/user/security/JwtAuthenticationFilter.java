@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             
                 Long userId = jwtProvider.getUserId(token);
             
-                User user = userRepository.findById(userId).orElseThrow();
+                User user = userRepository.findWithRolesById(userId).orElseThrow();
             
                 String tokenJti = jwtProvider.getJti(token); // 🔥 중요
 
