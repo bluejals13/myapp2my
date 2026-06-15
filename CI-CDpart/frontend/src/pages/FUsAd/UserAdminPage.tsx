@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/api.ts";
-import { useAuth } from "@/auth/AuthContext.tsx";
-import styles from "./UserAdminPage.module.css";
+import { useAuth } from "@/auth/AuthContext";
+import styles from "./UserAdminPage.module";
 
 type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
 
