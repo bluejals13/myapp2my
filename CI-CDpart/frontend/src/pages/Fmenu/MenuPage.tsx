@@ -34,14 +34,6 @@ export default function MenuPage() {
       setLoading(true);
       setError(null);
       
-      if (error) {
-        return <div style={{ color: "red" }}>{error}</div>;
-      }
-      
-      if (loading) {
-        return <div>로딩 중...</div>;
-      }
-      
       const data = await apiFetch<Menu[]>("/admin/menus");
       setMenus(data);
       
@@ -56,10 +48,12 @@ export default function MenuPage() {
     if (!canRead) return;
     fetchMenus();
   }, [canRead, fetchMenus]);
+  
+  if (loading) { return <div>로딩 중...</div>; }
 
-  if (!canRead) {
-    return <div>🚫 MENU_READ 권한이 없습니다</div>;
-  }
+  if (error) { return <div style={{ color: "red" }}>{error}</div>; }
+  
+  if (!canRead) { return <div>🚫 MENU_READ 권한이 없습니다</div>; }
 
   const createMenu = async () => {
     try {
