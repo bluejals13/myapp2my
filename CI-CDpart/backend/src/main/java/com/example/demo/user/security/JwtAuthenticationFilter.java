@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
     private final JwtProvider jwtProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private final RedisTemplate<String, String> redisTemplate; // 🔥 추가
-    //private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -69,7 +69,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             }
             
                 Long userId = jwtProvider.getUserId(token);
-                //User user = userRepository.findById(userId).orElseThrow();
+            
+                User user = userRepository.findById(userId).orElseThrow();
+            
                 String tokenJti = jwtProvider.getJti(token); // 🔥 중요
 
                 // 3. Redis의 현재 활성 세션 조회
@@ -96,12 +98,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 // 4. 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
-//            List<SimpleGrantedAuthority> authorities =
-//        user.getRoles().stream()
-//                .flatMap(r -> r.getPermissions().stream())
-//                .map(p -> new SimpleGrantedAuthority(p.getName()))
-//                .distinct()
-//                .toList();
+                List<SimpleGrantedAuthority> authorities =
+                    user.getRoles().stream()
+                    .flatMap(r -> r.getPermissions().stream())
+                    .map(p -> new SimpleGrantedAuthority(p.getName()))
+                    .distinct()
+                    .toList();
 
 
             
@@ -109,8 +111,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                         new UsernamePasswordAuthenticationToken(
                                 principal,
                                 null,
-                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                                //authorities
+                                //List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                                authorities
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
