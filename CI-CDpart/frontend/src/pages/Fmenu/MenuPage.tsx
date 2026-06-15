@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./menu.module.css";
@@ -25,36 +25,61 @@ export default function MenuPage() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
 
-  const fetchMenus = async () => {
-    const data = await apiFetch<Menu[]>("/admin/menus");
-    setMenus(data);
-  };
+  const [actionLoading, setActionLoading] = useState<number | "create" | null>(null);  // 버튼 UX
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const fetchMenus = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const data = await apiFetch<Menu[]>("/admin/menus");
+      setMenus(data);
+      
+    } catch {
+      setError("메뉴 조회 실패");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (canRead) fetchMenus();
-  }, [canRead]);
+    if (!canRead) return;
+    fetchMenus();
+  }, [canRead, fetchMenus]);
 
   if (!canRead) {
     return <div>🚫 MENU_READ 권한이 없습니다</div>;
   }
 
   const createMenu = async () => {
-    await apiFetch("/admin/menus", {
-      method: "POST",
-      body: JSON.stringify({ name, price } satisfies MenuRequest),
-    });
+    try {
+      setActionLoading("create");
+      await apiFetch("/admin/menus", {
+        method: "POST",
+        body: JSON.stringify({ name, price } satisfies MenuRequest),
+      });
 
-    setName("");
-    setPrice(0);
-    fetchMenus();
+      setName("");
+      setPrice(0);
+      fetchMenus();
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const deleteMenu = async (id: number) => {
-    await apiFetch(`/admin/menus/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchMenus();
+    try {
+      setActionLoading(id);
+      await apiFetch(`/admin/menus/${id}`, {
+        method: "DELETE",
+      });
+      
+      setMenus((prev) => prev.filter((m) => m.id !== id));
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   return (
@@ -78,8 +103,9 @@ export default function MenuPage() {
             onChange={(e) => setPrice(Number(e.target.value))}
           />
 
-          <button className={styles.button} onClick={createMenu}>
-            Create
+          <button className={styles.button} onClick={createMenu} 
+            disabled={ actionLoading === "create" || !name || price <= 0 }>
+            {actionLoading === "create" ? "Creating..." : "Create"}
           </button>
         </div>
       )}
@@ -99,11 +125,10 @@ export default function MenuPage() {
 
           {canDelete && (
             <div className={styles.cell}>
-              <button
-                className={styles.actionBtn}
+              <button className={styles.actionBtn}
                 onClick={() => deleteMenu(menu.id)}
-              >
-                Delete
+                disabled={actionLoading === menu.id}>
+                {actionLoading === menu.id ? "..." : "Delete"}
               </button>
             </div>
           )}
