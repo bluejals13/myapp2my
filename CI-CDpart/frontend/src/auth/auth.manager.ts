@@ -1,5 +1,5 @@
 // auth.manager.ts refresh + queue
-import { authStorage } from "./auth.storage.tsx";	// jwt 토큰 키 get, set, clear
+import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 
 let isRefreshing = false;
 // Promise<string>
