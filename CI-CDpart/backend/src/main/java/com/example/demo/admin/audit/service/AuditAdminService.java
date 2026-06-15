@@ -29,7 +29,7 @@ public class AuditAdminService {
         }
 
         return audits.stream()
-                .map(RoleResponse::from)
+                .map(AuditResponse::from)
                 .toList();
     }
 
