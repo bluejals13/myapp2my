@@ -26,8 +26,8 @@ export default function MenuPage() {
   const [price, setPrice] = useState<number>(0);
 
   const [actionLoading, setActionLoading] = useState<number | "create" | null>(null);  // 버튼 UX
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading] = useState(false);
+  const [error] = useState<string | null>(null);
   
   const fetchMenus = useCallback(async () => {
     try {
