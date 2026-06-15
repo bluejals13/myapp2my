@@ -6,8 +6,6 @@ import com.example.demo.admin.role.domain.Role;
 import com.example.demo.admin.role.repository.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
