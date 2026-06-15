@@ -1,0 +1,79 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  font-family: sans-serif;
+}
+
+/* HEADER */
+.header {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* CREATE FORM (Auto Layout Row) */
+.formRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.button {
+  height: 36px;
+  padding: 0 14px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+/* TABLE */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHeader {
+  display: flex;
+  background: #f5f5f5;
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.tableRow {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.cell {
+  flex: 1;
+}
+
+/* ACTION */
+.actionBtn {
+  background: #e11d48;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  opacity: 0.85;
+}
