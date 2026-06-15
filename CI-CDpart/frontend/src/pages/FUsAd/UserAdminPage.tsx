@@ -19,7 +19,9 @@ export default function UserAdminPage() {
   const canUpdate = hasPermission("USER_UPDATE");
   const canDelete = hasPermission("USER_DELETE");
 
+  const [statusLoading, setStatusLoading] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+  
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
