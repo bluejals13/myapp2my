@@ -5,6 +5,8 @@ import com.example.demo.admin.role.dto.RoleRequest;
 import com.example.demo.admin.role.dto.RoleResponse;
 import com.example.demo.admin.role.repository.RoleRepository;
 
+import com.example.demo.admin.permission.dto.PermissionResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
