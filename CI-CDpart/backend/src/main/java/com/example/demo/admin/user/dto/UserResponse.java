@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 public class UserResponse {
     private Long id;
     private String username;
-    private String status;
+    private UserStatus status;
     private LocalDateTime passwordChangedAt;
 }
