@@ -67,10 +67,11 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
   const logout = async () => {
+    try {
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
-    }); catch{ }
+    }); } catch{ }
     
     authStorage.clear();
     setToken(null);
