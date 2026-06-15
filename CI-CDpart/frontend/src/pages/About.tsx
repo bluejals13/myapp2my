@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiWithAuth } from "../auth/auth.interceptor";
-import { useAuth } from "../auth/AuthContext.tsx";
+import { useAuth } from "../auth/AuthContext";
 
 type MeResponse = {
   id: number;
