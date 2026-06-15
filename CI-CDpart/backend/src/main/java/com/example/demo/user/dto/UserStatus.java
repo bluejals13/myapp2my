@@ -1,6 +1,6 @@
 package com.example.demo.user.dto;
 
-public record UserStatus(
+public record UserResponse(
         Long id,
         String username
 ) {}
