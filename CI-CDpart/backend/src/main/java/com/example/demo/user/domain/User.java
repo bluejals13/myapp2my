@@ -40,6 +40,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.passwordChangedAt = null;
+        this.status = UserStatus.ACTIVE;
     }
 
     // 팩토리 메서드
