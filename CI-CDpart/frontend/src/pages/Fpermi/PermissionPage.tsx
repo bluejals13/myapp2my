@@ -18,7 +18,7 @@ export default function PermissionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPermissions = async () => {
+  const fetchPermissions = async () => {    // 퍼미션 검증 로직
     try { setLoading(true);
       setError(null);
       const data = await apiFetch<Permission[]>(
@@ -33,7 +33,7 @@ export default function PermissionPage() {
   };
 
 
-  useEffect(() => {
+  useEffect(() => {      // 트리거 만 시도
     if (!canView) {
       setLoading(false);
       return;
