@@ -124,6 +124,7 @@ export default function UserAdminPage() {
                 {canUpdate && (
                   <select
                     value={user.status}
+                    disabled={statusLoading === user.id}
                     onChange={(e) =>
                       changeStatus(user.id, e.target.value as UserStatus)
                     }
