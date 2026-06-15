@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../api";
-import { useAuth } from "../../auth/AuthContext";
+import { apiFetch } from "@/api";
+import { useAuth } from "@/auth/AuthContext";
 import styles from "./permission.module.css";
 
 type Permission = {
