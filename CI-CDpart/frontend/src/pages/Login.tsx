@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiFetch } from "@/api.ts";
-import { useAuth } from "@/auth/AuthContext.tsx";
+import { apiFetch } from "@/api";
+import { useAuth } from "@/auth/AuthContext";
 
 import { loginSchema } from "../auth/auth.schema";
 
