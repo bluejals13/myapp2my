@@ -9,31 +9,39 @@ export async function refreshToken(): Promise<string | null> {
   }
 
   refreshPromise = (async () => {
+    
     try {
       const res = await fetch("/api/auth/refresh", {
         method: "POST",
         credentials: "include",
       });
 
-      if (!res.ok) {            // fetch 에러 시 처리
-          const text = await res.text();
-          throw new Error(text || "refresh failed");
-        }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "refresh failed");
+      }
 
       const data = await res.json();
-  
-      const newToken =  data?.accessToken || data?.data?.accessToken || null; // ✔️ 추가 (중요)
+
+      const newToken =
+        data?.accessToken || data?.data?.accessToken || null;
+
+      if (!newToken) throw new Error("no token");
 
       authStorage.set(newToken);
 
       return newToken;
+
     } catch (e) {
-      authStorage.clear(); // ✔️ 안전 처리
+      authStorage.clear();
       window.dispatchEvent(new Event("auth:logout"));
       return null;
+
     } finally {
-      isRefreshing = false;
+      refreshPromise = null;
     }
-      return refreshPromise;
-  }
+    
+  })();
+
+  return refreshPromise;
 }
