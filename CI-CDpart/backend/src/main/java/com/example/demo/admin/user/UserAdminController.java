@@ -20,7 +20,7 @@ public class UserAdminController {
     // 전체 사용자 조회
     @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
-    public List<UserResponse> getUsers() {
+    public List<AdminUserResponse> getUsers() {
         return userAdminService.getUsers();
     }
 
