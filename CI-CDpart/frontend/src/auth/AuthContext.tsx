@@ -75,13 +75,10 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
 // 초기 로그인 복구
-useEffect(() => {
-  const init = async () => {
-    if (!authStorage.get()) { setIsLoading(false); return; }
-    try { await refreshUser(); }
-      finally { setIsLoading(false); }
-  };
-
+useEffect(() => { const init = async () => {
+    try { await refreshUser();     }
+    catch (e) { authStorage.clear(); setToken(null); setUser(null); }
+    finally { setIsLoading(false); }         };   
   init();
 }, []);
 
