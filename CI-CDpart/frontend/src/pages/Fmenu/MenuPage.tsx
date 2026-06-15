@@ -34,6 +34,14 @@ export default function MenuPage() {
       setLoading(true);
       setError(null);
       
+      if (error) {
+        return <div style={{ color: "red" }}>{error}</div>;
+      }
+      
+      if (loading) {
+        return <div>로딩 중...</div>;
+      }
+      
       const data = await apiFetch<Menu[]>("/admin/menus");
       setMenus(data);
       
