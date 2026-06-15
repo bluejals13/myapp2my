@@ -21,7 +21,7 @@ public class UserAdminService {
                 .stream()
                 .map(user -> new UserResponse(
                         user.getId(),
-                        user.getName(),
+                        user.getUsername(),
                         user.getPasswordChangedAt()
                 ))
                 .toList();
