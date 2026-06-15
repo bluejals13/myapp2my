@@ -4,6 +4,7 @@ import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { refreshToken } from "./auth.manager";
 
 let refreshPromise: Promise<string | null> | null = null;
+let isLoggedOut = false;
 
 export async function apiWithAuth<T>(
   url: string,
@@ -23,6 +24,7 @@ export async function apiWithAuth<T>(
     try {
       if (!refreshPromise) {
         refreshPromise = refreshToken().finally(() => {
+        if (isLoggedOut) throw err;
           refreshPromise = null;
         });
       }
