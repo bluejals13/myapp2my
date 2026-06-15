@@ -1,49 +1,39 @@
 // auth.manager.ts refresh + queue
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 
-let isRefreshing = false;
-// Promise<string>
-type RefreshResolver = (token: string | null) => void;
-
-let queue: RefreshResolver[] = [];
+let refreshPromise: Promise<string | null> | null = null;
 
 export async function refreshToken(): Promise<string | null> {
-  if (isRefreshing) {
-    return new Promise((resolve) => {
-      queue.push(resolve);
-    });
+  if (refreshPromise) {
+    return refreshPromise;
   }
 
-  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const res = await fetch("/api/auth/refresh", {
+        method: "POST",
+        credentials: "include",
+      });
 
-  try {
-    const res = await fetch("/api/auth/refresh", {
-      method: "POST",
-      credentials: "include",
-    });
+      if (!res.ok) {            // fetch 에러 시 처리
+          const text = await res.text();
+          throw new Error(text || "refresh failed");
+        }
 
-    if (!res.ok) throw new Error("refresh failed");
+      const data = await res.json();
+  
+      const newToken =  data?.accessToken || data?.data?.accessToken || null; // ✔️ 추가 (중요)
 
-    const data = await res.json();
+      authStorage.set(newToken);
 
-    const newToken =  data?.accessToken || data?.data?.accessToken || null; // ✔️ 추가 (중요)
-
-    authStorage.set(newToken);
-    
-    queue.forEach((cb) => cb(newToken));
-    queue.length = 0;
-
-    return newToken;
-  } catch (e) {
-    authStorage.clear(); // ✔️ 안전 처리
-    
-    queue.forEach((cb) => cb(null));
-    queue.length = 0;
-
-    window.dispatchEvent(new Event("auth:logout"));
-
-    return null;
-  } finally {
-    isRefreshing = false;
+      return newToken;
+    } catch (e) {
+      authStorage.clear(); // ✔️ 안전 처리
+      window.dispatchEvent(new Event("auth:logout"));
+      return null;
+    } finally {
+      isRefreshing = false;
+    }
+      return refreshPromise;
   }
 }
