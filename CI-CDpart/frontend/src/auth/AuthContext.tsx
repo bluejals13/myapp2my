@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { apiWithAuth } from "./auth.interceptor";
 
+let isLoggedOut = false;
+
 export type User = {	// 👈 RBAC 추가 수정 부분
   id: number;
   username: string;
