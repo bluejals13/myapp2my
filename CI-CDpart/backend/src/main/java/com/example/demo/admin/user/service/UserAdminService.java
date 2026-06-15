@@ -22,7 +22,7 @@ public class UserAdminService {
     public List<AdminUserResponse> getUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(user -> new UserResponse(
+                .map(user -> new AdminUserResponse(
                         user.getId(),
                         user.getUsername(),
                         user.getStatus(),
