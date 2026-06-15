@@ -1,5 +1,8 @@
 package com.example.demo.admin.audit.domain;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "audit_logs")
 public class Audit {
