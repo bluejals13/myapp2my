@@ -22,6 +22,7 @@ public class UserAdminService {
                 .map(user -> new UserResponse(
                         user.getId(),
                         user.getUsername(),
+                        user.getUsername(),
                         user.getPasswordChangedAt()
                 ))
                 .toList();
