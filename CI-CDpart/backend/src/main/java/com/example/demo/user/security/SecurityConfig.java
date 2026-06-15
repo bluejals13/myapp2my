@@ -19,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.user.jwt.JwtProvider;
+import com.example.demo.user.repository.UserRepository;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
