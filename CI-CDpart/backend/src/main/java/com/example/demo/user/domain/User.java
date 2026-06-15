@@ -2,6 +2,8 @@ package com.example.demo.user.domain;
 
 import com.example.demo.user.domain.UserStatus;
 
+import com.example.demo.admin.role.domain.Role;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,4 +57,18 @@ public class User {
     public void changeStatus(UserStatus status) {
     this.status = status;
     }
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name="user_id"),
+        inverseJoinColumns = @JoinColumn(name="role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    public void setRoles(Set<Role> roles) {
+    this.roles.clear();
+    this.roles.addAll(roles);
+    }
+
 }
