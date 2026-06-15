@@ -18,6 +18,7 @@ public class UserAdminService {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getUsers() {
         return userRepository.findAll()
                 .stream()
