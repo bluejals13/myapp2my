@@ -45,6 +45,7 @@ public class UserAdminController {
     }
     
     // 사용자 권한 확인
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PostMapping("/{id}/roles")
     public void assignRoles(
             @PathVariable Long id,
