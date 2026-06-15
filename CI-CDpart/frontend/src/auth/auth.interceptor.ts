@@ -15,7 +15,8 @@ export async function apiWithAuth<T>(
   } catch (err: any) { 
     
     const status = err?.status;                  
-    if (status !== 401) { throw err; }                  
+    if (status !== 401) { throw err; }
+    if (isLoggedOut) { throw err; }
     
     const original = options as any;
     if (original._retry) throw err;
@@ -24,14 +25,13 @@ export async function apiWithAuth<T>(
     try {
       if (!refreshPromise) {
         refreshPromise = refreshToken().finally(() => {
-        if (isLoggedOut) throw err;
           refreshPromise = null;
         });
       }
 
     const newToken = await refreshPromise;
       
-    if (!newToken) { throw err; }
+    if (isLoggedOut || !newToken) { throw err; }
 
     authStorage.set(newToken);
 
