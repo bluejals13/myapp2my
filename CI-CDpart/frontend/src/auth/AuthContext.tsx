@@ -77,13 +77,11 @@ const hasPermission = (p: string) =>		// 👈 추가
 // 초기 로그인 복구
 useEffect(() => {
   const init = async () => {
-    try {
-      if (authStorage.get()) {
-        await refreshUser();
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    if (!authStorage.get()) {
+        setIsLoading(false);
+        return; }
+    try { await refreshUser(); }
+      finally { setIsLoading(false); }
   };
 
   init();
