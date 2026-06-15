@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./UserAdminPage.module.css";
@@ -19,45 +19,52 @@ export default function UserAdminPage() {
   const canUpdate = hasPermission("USER_UPDATE");
   const canDelete = hasPermission("USER_DELETE");
 
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
+      
       setLoading(true);
       setError(null);
 
       const data = await apiFetch<User[]>("/admin/users");
       setUsers(data);
+      
     } catch {
       setError("유저 목록을 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (!authLoading && canRead) {
-      fetchUsers();
-    }
-  }, [authLoading, canRead]);
+    if (authLoading) return;
+    if (!canRead) return;
+    fetchUsers();
+  }, [authLoading, canRead, fetchUsers]);
 
   const deleteUser = async (id: number) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
-    try {
+    try { setActionLoading(id);
       await apiFetch(`/admin/users/${id}`, { method: "DELETE" });
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch {
       alert("삭제 실패");
+    } finally{ setActionLoading(null);
     }
   };
 
   const changeStatus = async (id: number, status: UserStatus) => {
-    try {
+    try { setStatusLoading(id);
       await apiFetch(`/admin/users/${id}/status`, {
         method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ status }),
       });
 
@@ -66,6 +73,7 @@ export default function UserAdminPage() {
       );
     } catch {
       alert("상태 변경 실패");
+    } finally { setStatusLoading(null);
     }
   };
 
@@ -128,6 +136,7 @@ export default function UserAdminPage() {
                   <button
                     className={styles.deleteBtn}
                     onClick={() => deleteUser(user.id)}
+                    disabled={actionLoading === user.id}
                   >
                     Delete
                   </button>
