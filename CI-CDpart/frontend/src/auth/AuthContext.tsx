@@ -70,7 +70,7 @@ const hasPermission = (p: string) =>		// 👈 추가
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
-    }); } catch{};
+    }); catch{} }
     
     authStorage.clear();
     setToken(null);
