@@ -83,6 +83,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+            // 유저 상태 분별
+            if (user.getStatus() != UserStatus.ACTIVE) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+            
                 // 4. 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
