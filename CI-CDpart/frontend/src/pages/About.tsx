@@ -10,28 +10,30 @@ type MeResponse = {
 };
 
 export default function About() {
-  const { token, user } = useAuth();
-
+  const { user, token } = useAuth();
+  
   const [me, setMe] = useState<MeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchMe = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await apiWithAuth<MeResponse>("/api/users/me");
+      setMe(res);
+
+    } catch (e: any) {
+      setError(e?.message ?? "유저 정보를 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        setLoading(true);
-
-        const res = await apiWithAuth<MeResponse>("/api/users/me");
-        setMe(res);
-      } catch (e: any) {
-        setError(e?.message ?? "유저 정보를 불러오지 못했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if (!token) return;
     fetchMe();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return <div>로딩 중...</div>;
