@@ -29,17 +29,18 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {         // 기본 접근 보안설정
 
     private final JwtProvider jwtProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private final RedisTemplate<String, String> redisTemplate;
-    //private final UserRepository userRepository;
+    private final UserRepository userRepository;
     
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate ); // UserRepository 추가 계획
+        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate, UserRepository); // UserRepository 추가 계획
         }
 
     @Bean
