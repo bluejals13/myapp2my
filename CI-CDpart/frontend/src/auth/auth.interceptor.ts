@@ -23,7 +23,7 @@ export async function apiWithAuth<T>(
     try {
       if (!refreshPromise) {
         refreshPromise = refreshToken().finally(() => {
-          isRefreshing = false;
+          // isRefreshing = false;
           refreshPromise = null;
         });
       }
