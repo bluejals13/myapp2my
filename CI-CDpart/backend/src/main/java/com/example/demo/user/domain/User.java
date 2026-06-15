@@ -1,5 +1,7 @@
 package com.example.demo.user.domain;
 
+import com.example.demo.admin.domain.UserStatus;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
