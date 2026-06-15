@@ -67,7 +67,7 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
   const logout = async () => {
-    try {
+    try { isLoggedOut = true;
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
