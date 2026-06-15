@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { apiWithAuth } from "./auth.interceptor";
 
-let isLoggedOut = false;
+export let isLoggedOut = false;
 
 export type User = {	// 👈 RBAC 추가 수정 부분
   id: number;
@@ -53,7 +53,7 @@ const hasPermission = (p: string) =>		// 👈 추가
     }
   };
 
-  const login = async (newToken: string) => {
+  const login = async (newToken: string) => { isLoggedOut = false;
   authStorage.set(newToken);
   setToken(newToken);
 
@@ -69,7 +69,7 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
   const logout = async () => {
-    try {
+    try { isLoggedOut = true;
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
