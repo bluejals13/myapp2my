@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;             // 생성자 주입 자동 �
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;    // jwt 사용자 정보 추출 후 생성
 import org.springframework.security.core.authority.SimpleGrantedAuthority;        // 권한 처리
 import org.springframework.security.core.context.SecurityContextHolder;                    // 보안 문자열 보관
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;    // 요청 당 1회 실행 필터
 import org.springframework.data.redis.core.RedisTemplate;    // redis 템플릿 으로 캐시 운용
