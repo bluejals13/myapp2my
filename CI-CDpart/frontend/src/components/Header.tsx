@@ -12,7 +12,7 @@ export default function Header() {
   return (
     <header style={{ padding: 12, borderBottom: "1px solid #ddd" }}>
       <nav style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <Link to="/Main">Main</Link>
+        <Link to="/">Main</Link>
         <Link to="/home">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
