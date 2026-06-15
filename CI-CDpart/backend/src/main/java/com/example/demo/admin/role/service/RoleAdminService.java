@@ -20,6 +20,8 @@ import java.util.List;
 @Transactional
 public class RoleAdminService {
 
+    public RoleResponse create(String name)
+    
     private final RoleRepository roleRepository;
 
     public List<RoleResponse> getRoles() {
