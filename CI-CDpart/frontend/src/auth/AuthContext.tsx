@@ -66,8 +66,11 @@ const hasPermission = (p: string) =>		// 👈 추가
     }
   };
 
-  const logout = () => {
-    await api.post("/auth/logout"); // ⭐ 중요
+  const logout = async () => {
+    await fetch("/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     
     authStorage.clear();
     setToken(null);
