@@ -40,7 +40,7 @@ export default function App() {
 
         {/* Layout 있는 영역 */}
         <Route element={<Layout />}>
-          <Route path="/" element={<Main />} />
+          <Route path="/" element={< />} />
 
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/permission" element={<PermissionPage />} />
