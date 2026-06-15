@@ -20,8 +20,6 @@ import java.util.List;
 @Transactional
 public class RoleAdminService {
 
-    public RoleResponse create(String name)
-    
     private final RoleRepository roleRepository;
 
     public List<RoleResponse> getRoles() {
@@ -35,12 +33,13 @@ public class RoleAdminService {
                                         .map(PermissionResponse::from)
                                         .collect(Collectors.toSet())
                         )
-                        .build())
+                        .build()
+                )
                 .toList();
     }
 
     public void createRole(RoleRequest request) {
-        Role role = Role.create(name);
+        Role role = new Role();
         role.updateName(request.getName());
         roleRepository.save(role);
     }
