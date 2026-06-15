@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
+@Entity
 @AllArgsConstructor
 public class AuditResponse {
 
