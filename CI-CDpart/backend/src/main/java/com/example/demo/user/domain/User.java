@@ -46,4 +46,8 @@ public class User {
     public LocalDateTime getPasswordChangedAt() {
         return passwordChangedAt;
     }
+    
+    public void changeStatus(UserStatus status) {
+    this.status = status;
+    }
 }
