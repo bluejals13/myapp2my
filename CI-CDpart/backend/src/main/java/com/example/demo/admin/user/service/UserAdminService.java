@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class UserAdminService {
@@ -22,7 +23,7 @@ public class UserAdminService {
                 .map(user -> new UserResponse(
                         user.getId(),
                         user.getUsername(),
-                        user.getUsername(),
+                        user.getstatus(),
                         user.getPasswordChangedAt()
                 ))
                 .toList();
