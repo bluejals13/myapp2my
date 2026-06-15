@@ -1,6 +1,10 @@
 package com.example.demo.user.security;
 
 import com.example.demo.user.jwt.JwtProvider;
+import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.domain.User;
+import com.example.demo.user.domain.UserStatus;
+
 import jakarta.servlet.FilterChain;                // 서브렛 http 요청 가로체기 및 jwt 검사
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
