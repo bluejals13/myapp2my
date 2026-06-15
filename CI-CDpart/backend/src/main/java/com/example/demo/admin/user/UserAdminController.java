@@ -18,7 +18,8 @@ import java.util.List;
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
-
+    private final UserRoleService userRoleService;
+    
     // 전체 사용자 조회
     @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
