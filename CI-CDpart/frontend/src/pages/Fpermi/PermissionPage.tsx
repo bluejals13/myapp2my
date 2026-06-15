@@ -18,25 +18,28 @@ export default function PermissionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        const data = await apiFetch<Permission[]>(
+  const fetchPermissions = async () => {
+    try { setLoading(true);
+      setError(null);
+      const data = await apiFetch<Permission[]>(
           "/api/admin/permissions"
-        );
-        setPermissions(data);
-      } catch {
-        setError("권한 목록을 불러오지 못했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (canView) {
-      fetchPermissions();
-    } else {
+      );
+      setPermissions(data);
+    } catch {
+      setError("권한 목록을 불러오지 못했습니다.");
+    } finally {
       setLoading(false);
     }
+  };
+
+
+  useEffect(() => {
+    if (!canView) {
+      setLoading(false);
+      return;
+    } 
+    
+    fetchPermissions();
   }, [canView]);
 
   if (isLoading || loading) {
