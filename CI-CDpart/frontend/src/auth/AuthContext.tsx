@@ -1,5 +1,5 @@
 // AuthContext.tsx UI 상태
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 //import { apiFetch } from "../api";
 import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
 import { apiWithAuth } from "./auth.interceptor";
