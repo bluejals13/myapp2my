@@ -36,7 +36,7 @@ public class RoleAdminService {
     }
 
     public void createRole(RoleRequest request) {
-        Role role = new Role();
+        Role role = Role.create(name);
         role.updateName(request.getName());
         roleRepository.save(role);
     }
