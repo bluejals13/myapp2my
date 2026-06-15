@@ -67,7 +67,7 @@ const hasPermission = (p: string) =>		// 👈 추가
   };
 
   const logout = async () => {
-    try { isLoggedOut = true;
+    try {
     await fetch("/auth/logout", {
       method: "POST",
       credentials: "include",
@@ -80,7 +80,9 @@ const hasPermission = (p: string) =>		// 👈 추가
 
 // 초기 로그인 복구
 useEffect(() => { const init = async () => {
-    try { await refreshUser();     }
+    try { const token = authStorage.get();
+      if (!token) { setIsLoading(false); return; }
+    await refreshUser();     }
     catch (e) { authStorage.clear(); setToken(null); setUser(null); }
     finally { setIsLoading(false); }         };   
   init();
