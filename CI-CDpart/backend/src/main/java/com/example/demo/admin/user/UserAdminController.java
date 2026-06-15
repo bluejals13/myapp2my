@@ -1,6 +1,6 @@
 package com.example.demo.admin.user;
 
-import com.example.demo.admin.user.dto.UserResponse;
+import com.example.demo.admin.user.dto.AdminUserResponse;
 import com.example.demo.admin.user.dto.UserStatusRequest;
 import com.example.demo.admin.user.service.UserAdminService;
 
