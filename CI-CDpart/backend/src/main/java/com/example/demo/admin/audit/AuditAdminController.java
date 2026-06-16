@@ -2,15 +2,11 @@ package com.example.demo.admin.audit;
 
 import com.example.demo.admin.audit.dto.AuditResponse;
 import com.example.demo.admin.audit.service.AuditAdminService;
-import com.example.demo.admin.audit.service.AuditService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuditAdminController {
 
-    private final AuditAdminService AuditAdminService;
+    private final AuditAdminService auditAdminService;
 
     @GetMapping
     public List<AuditResponse> getAudits(
