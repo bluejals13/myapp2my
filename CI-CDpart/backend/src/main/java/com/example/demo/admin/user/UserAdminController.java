@@ -24,9 +24,10 @@ public class UserAdminController {
     private final UserRoleService userRoleService;
     private final SecurityUtil securityUtil;
 
-    @PostConstruct
-    public void init() {
-        System.out.println("UserAdminController LOADED");
+    @GetMapping
+    @PreAuthorize("hasAuthority('USER_READ')")
+    public List<AdminUserResponse> getUsers() {
+        return userAdminService.getUsers();
     }
     
     @PreAuthorize("hasAuthority('USER_DELETE')")
