@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration; // 시간
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
