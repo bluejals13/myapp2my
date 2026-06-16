@@ -61,7 +61,7 @@ public class AuthService {    //    jti 접근 토큰 로직 관리 파일
         redisTemplate.opsForValue().set(
             "active-jti:" + userId,
             newJti,
-            Duration.ofDays(7)
+            Duration.ofMinutes(30)
             );
 
         return new TokenResponse(newAccessToken);
