@@ -28,7 +28,8 @@ public class UserAdminService {
             .map(user -> new AdminUserResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getStatus()
+                user.getStatus().name(),
+                user.getCreatedAt()
             ))
         .toList();
     }
