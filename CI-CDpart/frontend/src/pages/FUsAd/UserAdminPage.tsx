@@ -32,7 +32,7 @@ export default function UserAdminPage() {
       setLoading(true);
       setError(null);
 
-      const data = await apiFetch<User[]>("/admin/users");
+      const data = await apiFetch<User[]>("/api/admin/users");
       setUsers(data);
       
     } catch {
