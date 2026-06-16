@@ -15,8 +15,12 @@ public class Audit {
 
     private Long userId;      // 누가 했는지
     private String action;    // 무엇을 했는지 (CREATE, DELETE 등)
+    
+    private String targetType; // 대상 타입
 
-    //private String detail;    // 추가 설명 (선택)
+    private Long targetId;    // 대상 ID
+
+    private String result;    // 결과
 
     private LocalDateTime createdAt;
 }
