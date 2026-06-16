@@ -11,14 +11,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {
         "roles",
         "roles.permissions"
-    })
-    Optional<User> findByUsername(String username);
-
-    @EntityGraph(attributePaths = {
-        "roles",
-        "roles.permissions"
-    })
-    Optional<User> findWithRolesById(Long id);
+    }) @Query("""
+        select u
+        from User u
+        where u.id = :id
+    """) Optional<User> findUserWithRolesById(Long id);
 
     boolean existsByUsername(String username);
 }
