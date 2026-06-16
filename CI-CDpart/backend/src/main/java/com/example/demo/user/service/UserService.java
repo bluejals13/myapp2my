@@ -86,17 +86,12 @@ public class UserService {
 
     // 내 정보 조회
     // 로그인 및 보안 컨텍스트 용 유저반응 겟미
-    public UserResponse getMe(Long userId) {
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("유저 없음"));
-
-        return new UserResponse(user.getId(), user.getUsername());
-    }
-    // 롤 퍼미션 관리자 용 미반응 겟미
     public MeResponse getMe(Long userId) {
-        User user = userRepository.findWithRolesById(userId).orElseThrow();
+
+        User user = userRepository.findWithRolesById(userId)
+            .orElseThrow(() -> new UserNotFoundException("유저 없음"));
         
+            // 롤 퍼미션 관리자 용 미반응 겟미
         List<String> roles = user.getRoles()
             .stream()
             .map(Role::getName)
