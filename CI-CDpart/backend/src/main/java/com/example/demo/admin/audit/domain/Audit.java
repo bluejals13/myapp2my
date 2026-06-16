@@ -3,7 +3,6 @@ package com.example.demo.admin.audit.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.time.LocalDateTime;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "audit_logs")
@@ -25,8 +24,7 @@ public class Audit {
     private Long targetId;    // 대상 ID
 
     private String result;    // 작업 성공/실패
-
-    @CreatedDate
+    
     private LocalDateTime createdAt;
     
     public static Audit create(
