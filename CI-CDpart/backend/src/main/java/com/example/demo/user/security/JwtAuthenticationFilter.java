@@ -69,8 +69,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             Long userId = Long.parseLong(claims.getSubject());
 
             // 나중 sj4t > console(log 화
-            System.out.println("TOKEN CHECK: " + token);
-            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(jti));
+            System.out.println("userId=" + userId);
+            System.out.println("jti=" + jti);
 
             // 2. 블랙리스트 검사
             //if (tokenBlacklistService.isBlacklisted(jti)) {
@@ -83,11 +83,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             // User user = userRepository.findWithRolesById(userId).orElseThrow();           
             // String tokenJti = jwtProvider.getJti(token); // 🔥 중요
             
-            // 3. 사용자 조회 주의
-            User user = userRepository.findWithRolesById(userId)
-                .orElseThrow();
+
             
-            // 4. Redis의 현재 활성 세션 조회
+            // 3. Redis의 현재 활성 세션 조회
             String activeJti = redisTemplate.opsForValue()
                     .get("active-jti:" + userId);
 
@@ -97,13 +95,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             // active-jti 없고            
             // 현재 활성 토큰이 아니면 실패
             if (activeJti == null)  {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                401;
             }
             if (!jti.equals(activeJti)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                401;
             }
+            
+            // 4. 사용자 조회 주의
+            User user = userRepository.findWithRolesById(userId)
+                .orElseThrow();
+            
             // 5. 유저 상태 분별
             if (user.getStatus() == null || user.getStatus() != UserStatus.ACTIVE) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
