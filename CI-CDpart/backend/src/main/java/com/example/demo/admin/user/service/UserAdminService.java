@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserAdminService {
 
     private final UserRepository userRepository;
@@ -48,6 +48,10 @@ public class UserAdminService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));    // null safety 부분
 
         //user.changeStatus(status);
+        Long adminId = SecurityContextHolder.getContext()
+        .getAuthentication()
+        .getName(); // 또는 principal에서 추출
+        
         auditService.log(
         adminId,
         AuditAction.USER_STATUS_CHANGE,
