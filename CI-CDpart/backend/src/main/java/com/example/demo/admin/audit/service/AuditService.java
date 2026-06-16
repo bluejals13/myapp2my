@@ -15,10 +15,10 @@ public class AuditService {
     private final AuditRepository auditRepository;
     private final AuditService auditService;
 
-    public void log(Long actorId, AuditAction action, Long targetId) {
+    public void log(Long userId, AuditAction action, Long targetId) {
 
         Audit audit = Audit.create(
-                actorId,
+                userId,
                 action,
                 targetId
         );
