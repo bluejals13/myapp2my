@@ -6,9 +6,13 @@ import com.example.demo.admin.audit.service.AuditService;
 import com.example.demo.admin.user.dto.AdminUserResponse;
 
 import com.example.demo.user.repository.UserRepository;
+
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.User;
 
+import com.example.demo.user.security.CustomUserPrincipal;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -16,48 +20,22 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserAdminService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
-    
-    @Transactional(readOnly = true)
-    public List<AdminUserResponse> getUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(user -> new AdminUserResponse(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getStatus(),
-                        user.getPasswordChangedAt()
-                ))
-                .toList();
-    }
 
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) { throw new IllegalArgumentException("User not found"); }
-        //userRepository.deleteById(id);
+    public void deleteUser(Long adminId, Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        userRepository.delete(user);
+
         auditService.log(
-        adminId,
-        AuditAction.USER_DELETE,
-        user.getId()
+                adminId,
+                AuditAction.USER_DELETE,
+                userId
         );
     }
-
-    public void changeStatus(Long id, UserStatus status) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));    // null safety 부분
-
-        //user.changeStatus(status);
-        Long adminId = SecurityContextHolder.getContext()
-        .getAuthentication()
-        .getName(); // 또는 principal에서 추출
-        
-        auditService.log(
-        adminId,
-        AuditAction.USER_STATUS_CHANGE,
-        user.getId()
-        );
-    }
-}
