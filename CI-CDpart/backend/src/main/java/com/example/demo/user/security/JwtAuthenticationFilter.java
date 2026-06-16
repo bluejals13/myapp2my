@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             return;
         }
 
-        try {
+        try {    // 0. Bearer 헤더 검증
             String header = request.getHeader("Authorization");
 
             if (header == null || !header.startsWith("Bearer ")) {
@@ -56,48 +56,60 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 return;
             }
 
+            
             String token = header.substring(7);
-            System.out.println("TOKEN CHECK: " + token);
-            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(token));
+            
+            // 1. JWT 검증
+            if (!jwtProvider.validateToken(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); return; }
+            
+            
+            Claims claims = jwtProvider.parseClaims(token);
+            String jti = claims.getId();
+            Long userId = Long.parseLong(claims.getSubject());
 
-            // 1. 블랙리스트 검사
-            if (tokenBlacklistService.isBlacklisted(token)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // 나중 sj4t > console(log 화
+            System.out.println("TOKEN CHECK: " + token);
+            System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(jti));
+
+            // 2. 블랙리스트 검사
+            if (tokenBlacklistService.isBlacklisted(jti)) {
+                response.setStatus(401);
                 return;
             }
 
-            // 2. JWT 검증
-            if (!jwtProvider.validateToken(token)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                 return;
-            }
-            
-            Long userId = jwtProvider.getUserId(token);
-            
-            User user = userRepository.findWithRolesById(userId).orElseThrow();
-            
-            String tokenJti = jwtProvider.getJti(token); // 🔥 중요
 
-            // 3. Redis의 현재 활성 세션 조회
+            // Long userId = jwtProvider.getUserId(token);            
+            // User user = userRepository.findWithRolesById(userId).orElseThrow();           
+            // String tokenJti = jwtProvider.getJti(token); // 🔥 중요
+            
+            // 3. 사용자 조회 주의
+            User user = userRepository.findWithRolesById(userId)
+                .orElseThrow();
+            
+            // 4. Redis의 현재 활성 세션 조회
             String activeJti = redisTemplate.opsForValue()
                     .get("active-jti:" + userId);
+
+            // 나중 sj4t > console(log 화
+            System.out.println("activeJti = " + activeJti);
             
             // active-jti 없고            
             // 현재 활성 토큰이 아니면 실패
-            if (activeJti != null && !tokenJti.equals(activeJti)) {
+            if (activeJti != null || !jti.equals(activeJti)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            // 유저 상태 분별
+            // 5. 유저 상태 분별
             if (user.getStatus() == null || user.getStatus() != UserStatus.ACTIVE) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-            System.out.println("tokenJti = " + tokenJti);
-            System.out.println("activeJti = " + activeJti);
-            // 4. 인증 성공
-            CustomUserPrincipal principal = new CustomUserPrincipal(userId);
+            
+            // System.out.println("tokenJti = " + tokenJti);
+            
 
+            // 6. 인증 성공 기록 보관            
             List<GrantedAuthority> authorities = new ArrayList<>();
                     
             // ROLE
@@ -111,6 +123,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                     authorities.add(new SimpleGrantedAuthority(p.getName()))
                     )
                 );
+            
+
+            // 7. 보안 컨텍스트 설정
+            CustomUserPrincipal principal = new CustomUserPrincipal(userId);
             
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken( principal, null, authorities );
