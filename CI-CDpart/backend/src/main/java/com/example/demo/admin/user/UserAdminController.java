@@ -1,6 +1,5 @@
 package com.example.demo.admin.user;
 
-import com.example.demo.user.dto.UserResponse;
 import com.example.demo.admin.user.dto.UserStatusRequest;
 import com.example.demo.admin.user.service.UserAdminService;
 import com.example.demo.admin.user.service.UserRoleService;
@@ -23,7 +22,7 @@ public class UserAdminController {
     // 전체 사용자 조회
     @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
-    public List<UserResponse> getUsers() {
+    public List<UserAdminService> getUsers() {
         return userAdminService.getUsers();
     }
 
