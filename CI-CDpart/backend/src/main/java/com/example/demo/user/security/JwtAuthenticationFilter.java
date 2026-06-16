@@ -92,7 +92,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-            
+            System.out.println("tokenJti = " + tokenJti);
+            System.out.println("activeJti = " + activeJti);
                 // 4. 인증 성공
                 CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
