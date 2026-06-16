@@ -24,16 +24,16 @@ public class UserAdminService {
     private final AuditService auditService;
     private LocalDateTime createdAt;
     
-    public class AdminUserResponse { private Long id; private String username;
-    private UserStatus status; private LocalDateTime passwordChangedAt;
-
-        public AdminUserResponse(Long id, String username, UserStatus status, LocalDateTime passwordChangedAt) {
-            this.id = id;
-            this.username = username;
-            this.status = status;
-            this.passwordChangedAt = passwordChangedAt;
+    public List<AdminUserResponse> getUsers() {
+        return userRepository.findAll().stream()
+            .map(user -> new AdminUserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getStatus(),
+                user.getPasswordChangedAt()
+            ))
+            .toList();
         }
-    }
     
     
     @Transactional
