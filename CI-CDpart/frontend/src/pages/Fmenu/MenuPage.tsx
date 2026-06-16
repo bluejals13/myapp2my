@@ -34,7 +34,7 @@ export default function MenuPage() {
       setLoading(true);
       setError(null);
       
-      const data = await apiFetch<Menu[]>("/admin/menus");
+      const data = await apiFetch<Menu[]>("/api/admin/menus");
       setMenus(data);
       
     } catch {
