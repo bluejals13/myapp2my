@@ -19,7 +19,7 @@ public class AuditResponse {
         return new AuditResponse(
                 audit.getId(),
                 audit.getUserId(),
-                audit.getAction(),
+                audit.getAction().name(),
                 audit.getCreatedAt()
         );
     }
