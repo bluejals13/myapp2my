@@ -38,6 +38,7 @@ public class SecurityConfig {         // 기본 접근 보안설정
     private final TokenBlacklistService tokenBlacklistService;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
