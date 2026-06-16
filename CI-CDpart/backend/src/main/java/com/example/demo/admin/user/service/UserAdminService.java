@@ -33,18 +33,23 @@ public class UserAdminService {
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) { throw new IllegalArgumentException("User not found"); }
-        userRepository.deleteById(id);
+        //userRepository.deleteById(id);
         auditService.log(
         adminId,
         AuditAction.USER_DELETE,
         user.getId()
-);
+        );
     }
 
     public void changeStatus(Long id, UserStatus status) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));    // null safety 부분
 
-        user.changeStatus(status);
+        //user.changeStatus(status);
+        auditService.log(
+        adminId,
+        AuditAction.USER_STATUS_CHANGE,
+        user.getId()
+        );
     }
 }
