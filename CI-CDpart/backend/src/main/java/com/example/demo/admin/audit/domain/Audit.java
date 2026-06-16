@@ -22,5 +22,6 @@ public class Audit {
 
     private String result;    // 작업 성공/실패
 
+    @CreatedDate
     private LocalDateTime createdAt;
 }
