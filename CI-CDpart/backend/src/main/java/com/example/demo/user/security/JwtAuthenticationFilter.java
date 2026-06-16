@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
         try {    // 0. Bearer 헤더 검증
             String header = request.getHeader("Authorization");
 
-            if (header == null && !header.startsWith("Bearer ")) {
+            if (header == null || !header.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -96,7 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             
             // active-jti 없고            
             // 현재 활성 토큰이 아니면 실패
-            if (activeJti != null || !jti.equals(activeJti)) {
+            if (activeJti != null && !jti.equals(activeJti)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
