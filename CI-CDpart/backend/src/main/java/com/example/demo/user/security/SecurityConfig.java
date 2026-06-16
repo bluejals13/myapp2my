@@ -67,10 +67,11 @@ public class SecurityConfig {         // 기본 접근 보안설정
             .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
             
             .authorizeHttpRequests(auth -> auth
-               .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-               .requestMatchers("/api/auth/**").permitAll()
-               .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-               .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/admin/**").authenticated()
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
