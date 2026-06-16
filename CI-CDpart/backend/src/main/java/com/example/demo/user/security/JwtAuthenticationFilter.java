@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
 
         String path = request.getServletPath();
 
-        if (path.startsWith("/api/auth")) {
+        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -81,14 +81,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 String activeJti = redisTemplate.opsForValue()
                         .get("active-jti:" + userId);
             
-            // active-jti 없으면 실패
-            if (activeJti == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            
+            // active-jti 없고            
             // 현재 활성 토큰이 아니면 실패
-            if (!tokenJti.equals(activeJti)) {
+            if (activeJti != null && !tokenJti.equals(activeJti)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
@@ -104,11 +99,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 List<GrantedAuthority> authorities =
                     user.getRoles().stream()
                     .flatMap(r -> r.getPermissions().stream())
+                    .filter(p -> p.getName() != null)
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
                     .distinct()
                     .collect(Collectors.toList());
-
-
             
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
