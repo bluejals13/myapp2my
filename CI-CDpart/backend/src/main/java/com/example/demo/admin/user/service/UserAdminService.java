@@ -30,6 +30,7 @@ public class UserAdminService {
                 user.getId(),
                 user.getUsername(),
                 user.getStatus().name()
+                user.getCreatedAt()
             ))
         .toList();
     }
