@@ -6,6 +6,7 @@ import com.example.demo.admin.audit.dto.AuditResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
