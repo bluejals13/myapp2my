@@ -46,5 +46,11 @@ public class UserRoleService {
         .getAuthentication()
         .getPrincipal()
         ).getUserId();
+
+        auditService.log(
+        adminId,
+        AuditAction.USER_DELETE,
+        user.getId()
+        );
     }
 }
