@@ -10,9 +10,6 @@ import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.User;
 
-import com.example.demo.user.security.CustomUserPrincipal;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
