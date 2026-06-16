@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuditService {
 
     private final AuditRepository auditRepository;
+    private final AuditService auditService;
 
     public void log(Long actorId, AuditAction action, Long targetId) {
 
