@@ -83,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             
             // active-jti 없으면 실패
             if (activeJti == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                filterChain.doFilter(request, response);
                 return;
             }
             
