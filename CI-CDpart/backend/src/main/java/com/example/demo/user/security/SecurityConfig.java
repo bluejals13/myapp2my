@@ -73,7 +73,7 @@ public class SecurityConfig {         // 기본 접근 보안설정
                .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((req, res, e) -> {
