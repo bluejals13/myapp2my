@@ -29,7 +29,7 @@ public class UserAdminService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         //userRepository.delete(user);
-        user.changeStatus(DELETED);
+        user.changeStatus(UserStatus.INACTIVE);
 
         auditService.log(
                 adminId,
