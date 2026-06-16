@@ -11,10 +11,14 @@ import com.example.demo.user.security.CustomUserPrincipal;
 public class SecurityUtil {
 
     public Long getUserId() {
-        return ((CustomUserPrincipal)
-                SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getPrincipal()
-        ).getUserId();
+        Object principal = SecurityContextHolder.getContext()
+        .getAuthentication()
+        .getPrincipal();
+
+        if (principal instanceof CustomUserPrincipal p) {
+            return p.getUserId();
+        }
+
+        throw new IllegalStateException("Invalid authentication");
     }
 }
