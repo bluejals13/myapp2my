@@ -20,7 +20,7 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const res = await fetch("/api" + url, {
+  const res = await fetch(url, {
     ...options,
     headers,
   });
