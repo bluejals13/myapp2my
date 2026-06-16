@@ -3,6 +3,7 @@ package com.example.demo.admin.audit.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "audit_logs")
