@@ -85,6 +85,7 @@ public class UserService {
     }
 
     // 내 정보 조회
+    // 로그인 및 보안 컨텍스트 용 유저반응 겟미
     public UserResponse getMe(Long userId) {
 
         User user = userRepository.findById(userId)
@@ -92,7 +93,30 @@ public class UserService {
 
         return new UserResponse(user.getId(), user.getUsername());
     }
-
+    // 롤 퍼미션 관리자 용 미반응 겟미
+    public MeResponse getMe(Long userId) {
+        User user = userRepository.findWithRolesById(userId).orElseThrow();
+        
+        List<String> roles = user.getRoles()
+            .stream()
+            .map(Role::getName)
+            .toList();
+        
+        List<String> permissions = user.getRoles()
+            .stream()
+            .flatMap(r -> r.getPermissions().stream())
+            .map(Permission::getName)
+            .distinct()
+            .toList();
+        
+        return new MeResponse(
+            user.getId(),
+            user.getUsername(),
+            roles,
+            permissions
+        );
+    }
+            
     // 비밀번호 변경
     @Transactional
     public void updatePassword(Long userId, UpdatePasswordRequest req) {
