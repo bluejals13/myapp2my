@@ -20,7 +20,8 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
     private final UserRoleService userRoleService;
     private final SecurityUtil securityUtil;
-
+    
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
 
@@ -28,7 +29,8 @@ public class UserAdminController {
 
         userAdminService.deleteUser(adminId, id);
     }
-
+    
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PatchMapping("/{id}/status")
     public void changeStatus(
             @PathVariable Long id,
@@ -38,7 +40,8 @@ public class UserAdminController {
 
         userAdminService.changeStatus(adminId, id, request.status());
     }
-
+    
+    @PreAuthorize("hasAuthority('USER_ROLE_MANAGE')")
     @PostMapping("/{id}/roles")
     public void assignRoles(
             @PathVariable Long id,
