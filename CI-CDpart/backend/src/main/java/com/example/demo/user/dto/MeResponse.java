@@ -1,9 +1,8 @@
 package com.example.demo.user.dto;
 
+import java.util.List;
 import com.example.demo.admin.role.domain.Role;
 import com.example.demo.admin.permission.domain.Permission;
-
-import java.util.List;
 
 public record MeResponse(
     Long id,
