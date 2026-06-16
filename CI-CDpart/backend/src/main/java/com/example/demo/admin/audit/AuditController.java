@@ -1,7 +1,7 @@
 package com.example.demo.admin.audit;
 
 import com.example.demo.admin.audit.dto.AuditResponse;
-import com.example.demo.admin.audit.service.AuditAdminService;
+import com.example.demo.admin.audit.service.AuditService;
 import com.example.demo.admin.audit.service.AuditService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/audits")
 @RequiredArgsConstructor
-public class AuditAdminController {
+public class AuditController {
 
-    private final AuditAdminService auditAdminService;
+    private final AuditService auditService;
 
     @GetMapping
     public List<AuditResponse> getAudits(
