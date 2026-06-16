@@ -34,6 +34,6 @@ public class AuditAdminController {
     @GetMapping
     public Page<AuditResponse> getAudits(
         Pageable pageable
-    )
+    );
     
 }
