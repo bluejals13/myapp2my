@@ -1,6 +1,8 @@
 package com.example.demo.admin.user.service;
 
 import com.example.demo.admin.audit.domain.AuditAction;
+import com.example.demo.admin.audit.service.AuditService;
+
 import com.example.demo.admin.user.dto.AdminUserResponse;
 
 import com.example.demo.user.repository.UserRepository;
