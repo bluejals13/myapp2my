@@ -28,13 +28,13 @@ public class Audit {
     private LocalDateTime createdAt;
     
     public static Audit create(
-        Long actorId,
+        Long userId,
         AuditAction action,
         Long targetId
     ) {
         Audit audit = new Audit();
 
-        audit.actorId = actorId;
+        audit.userId = userId;
         audit.action = action;
         audit.targetId = targetId;
         audit.createdAt = LocalDateTime.now();
