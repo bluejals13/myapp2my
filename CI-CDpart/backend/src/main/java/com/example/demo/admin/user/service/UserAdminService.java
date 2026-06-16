@@ -34,6 +34,11 @@ public class UserAdminService {
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) { throw new IllegalArgumentException("User not found"); }
         userRepository.deleteById(id);
+        auditService.log(
+        adminId,
+        AuditAction.USER_DELETE,
+        user.getId()
+);
     }
 
     public void changeStatus(Long id, UserStatus status) {
