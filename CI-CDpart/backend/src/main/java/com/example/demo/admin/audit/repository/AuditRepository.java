@@ -2,6 +2,10 @@ package com.example.demo.admin.audit.repository;
 
 import com.example.demo.admin.audit.domain.Audit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
