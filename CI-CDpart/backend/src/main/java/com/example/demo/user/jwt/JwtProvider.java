@@ -58,8 +58,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
             .setSubject(String.valueOf(userId))
             .setId(jti) // 🔥 핵심
             .claim("username", username) 
-            //.claim("role", role)
-            //.claim("type", "access")
+            //.claim("type", "access") // 나중에 필터 에서 string = claims.get("type" ~~~~) \n if (!"refresh".equals(type))
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
