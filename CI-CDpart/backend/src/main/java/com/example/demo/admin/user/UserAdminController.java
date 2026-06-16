@@ -19,42 +19,33 @@ public class UserAdminController {
 
     private final UserAdminService userAdminService;
     private final UserRoleService userRoleService;
-    
-    // 전체 사용자 조회
-    @PreAuthorize("hasAuthority('USER_READ')")
-    @GetMapping
-    public List<AdminUserResponse> getUsers() {
-        return userAdminService.getUsers();
-    }
+    private final SecurityUtil securityUtil;
 
-    // 사용자 삭제
-    @PreAuthorize("hasAuthority('USER_DELETE')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        userAdminService.deleteUser(id);
+
+        Long adminId = securityUtil.getUserId();
+
+        userAdminService.deleteUser(adminId, id);
     }
 
-    // 사용자 상태 변경 (활성/비활성)
-    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PatchMapping("/{id}/status")
     public void changeStatus(
             @PathVariable Long id,
             @RequestBody UserStatusRequest request
     ) {
-        userAdminService.changeStatus(id, request.status());
+        Long adminId = securityUtil.getUserId();
+
+        userAdminService.changeStatus(adminId, id, request.status());
     }
-    
-    // 사용자 권한 확인
-    @PreAuthorize("hasAuthority('USER_ROLE_MANAGE')")
+
     @PostMapping("/{id}/roles")
     public void assignRoles(
             @PathVariable Long id,
             @RequestBody UserRoleRequest request
     ) {
-        userRoleService.assignRoles(
-                id,
-                request.roleIds()
-        );
+        Long adminId = securityUtil.getUserId();
+
+        userRoleService.assignRoles(adminId, id, request.roleIds());
     }
-    
 }
