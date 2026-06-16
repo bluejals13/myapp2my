@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class AdminUserResponse {
-    private Long id;
-    private String username;
-    private UserStatus status;
-    private LocalDateTime passwordChangedAt;
-}
+public class AdminUserResponse (
+    Long id;
+    String username;
+    UserStatus status;
+    LocalDateTime passwordChangedAt;
+) {}
