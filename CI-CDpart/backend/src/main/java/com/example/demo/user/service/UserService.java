@@ -45,10 +45,7 @@ public class UserService {
     }
 
     // 로그인
-    public LoginResult login(LoginRequest req) {
-        
-        System.out.println("password raw = " + req.password());
-        System.out.println("password db  = " + user.getPassword());
+    public LoginResult login(LoginRequest req) {        
         
         User user = userRepository.findByUsername(req.username())
                 .orElseThrow(() -> new BadCredentialsException("INVALID_CREDENTIALS"));
@@ -56,6 +53,10 @@ public class UserService {
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
+                
+        System.out.println("password raw = " + req.password());
+        System.out.println("password db  = " + user.getPassword());
+        
         System.out.println("match = " + passwordEncoder.matches(req.password(), user.getPassword()));
         // 접근 과 redis 연결 가
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
