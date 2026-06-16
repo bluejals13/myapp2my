@@ -30,7 +30,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 토큰 검증 필터
 
     private final JwtProvider jwtProvider;
-    private final TokenBlacklistService tokenBlacklistService;
+    //private final TokenBlacklistService tokenBlacklistService;
     private final RedisTemplate<String, String> redisTemplate; // 🔥 추가
     private final UserRepository userRepository;
 
