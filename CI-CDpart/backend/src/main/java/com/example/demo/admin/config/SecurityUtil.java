@@ -1,7 +1,8 @@
 package com.example.demo.admin.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import com.example.demo.user.security.CustomUserPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Component
 public class SecurityUtil {
