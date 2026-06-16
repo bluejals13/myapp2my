@@ -13,6 +13,7 @@ import java.util.UUID;        // 만료 jti
 import lombok.extern.slf4j.Slf4j;    // 기본 로거 호출용
 
 @Slf4j
+@Component
 public class JwtProvider {    // 각 토큰 제공 파일
     
     // application.yaml 부분의 환경 변수 일치 확인 할 것
