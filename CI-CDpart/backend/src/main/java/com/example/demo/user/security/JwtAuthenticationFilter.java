@@ -88,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                 return;
             }
             // 유저 상태 분별
-            if (user.getStatus() != UserStatus.ACTIVE) {
+            if (user.getStatus() == null || user.getStatus() != UserStatus.ACTIVE) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
