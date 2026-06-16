@@ -9,7 +9,6 @@ import com.example.demo.user.jwt.JwtProvider;
 import com.example.demo.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,16 +21,16 @@ import java.time.Duration; // 시간
 @RequiredArgsConstructor
 public class UserService {
     
-    private final AuthService authService;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     // 회원가입
+    @Transactional
     public UserResponse signup(SignupRequest req) {
 
-        if (userRepository.findByUsername(req.username()).isPresent()) {
+        if (userRepository.existsByUsername(req.username())) {
             throw new DuplicateUserException("이미 존재하는 유저");
         }
 
