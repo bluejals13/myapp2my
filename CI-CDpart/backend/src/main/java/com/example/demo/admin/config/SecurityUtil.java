@@ -1,9 +1,10 @@
 package com.example.demo.admin.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.demo.user.security.CustomUserPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
