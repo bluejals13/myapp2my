@@ -38,6 +38,11 @@ public class UserRoleService {
             throw new IllegalArgumentException("Role not found");
             }
 
-        user.setRoles(roles);
+        //user.setRoles(roles);
+        auditService.log(
+        adminId,
+        AuditAction.ROLE_ASSIGN,
+        user.getId()
+        );
     }
 }
