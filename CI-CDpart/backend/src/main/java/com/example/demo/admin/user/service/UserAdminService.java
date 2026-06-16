@@ -33,7 +33,7 @@ public class UserAdminService {
 
         auditService.log(
                 adminId,
-                AuditAction.USER_DEACTIVATED,
+                AuditAction.USER_STATUS_CHANGE,
                 userId
         );
     }
