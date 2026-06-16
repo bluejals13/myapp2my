@@ -4,7 +4,6 @@ import com.example.demo.user.domain.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -12,11 +11,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {
         "roles",
         "roles.permissions"
-    }) @Query("""
-        select u
-        from User u
-        where u.id = :id
-    """) Optional<User> findUserWithRolesById(Long id);
+    })
+    Optional<User> findUserWithRolesById(Long id);
 
     boolean existsByUsername(String username);
 }
