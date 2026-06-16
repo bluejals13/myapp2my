@@ -96,4 +96,18 @@ public class UserController {
     ) {
         userService.updatePassword(principal.getUserId(), req);
     }
+    
+    // 디버그용
+    @GetMapping("/debug/auth")
+    public Object debug() {
+        Authentication auth =
+        SecurityContextHolder.getContext().getAuthentication();
+
+        return Map.of(
+            "auth", auth,
+            "authorities", auth.getAuthorities(),
+            "principal", auth.getPrincipal(),
+            "type", auth.getClass().getSimpleName()
+        );
+    }    
 }
