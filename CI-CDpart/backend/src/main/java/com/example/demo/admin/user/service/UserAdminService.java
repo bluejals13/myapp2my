@@ -17,19 +17,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserAdminService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private LocalDateTime createdAt;
     
     public List<AdminUserResponse> getUsers() {
         return userRepository.findAll().stream()
             .map(user -> new AdminUserResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getStatus().name(),
-                user.getCreatedAt()
+                user.getStatus().name()
             ))
         .toList();
     }
