@@ -73,10 +73,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             System.out.println("BLACKLIST CHECK: " + tokenBlacklistService.isBlacklisted(jti));
 
             // 2. 블랙리스트 검사
-            if (tokenBlacklistService.isBlacklisted(jti)) {
-                response.setStatus(401);
-                return;
-            }
+            //if (tokenBlacklistService.isBlacklisted(jti)) {
+                //response.setStatus(401);
+                //return;
+            //}
 
 
             // Long userId = jwtProvider.getUserId(token);            
