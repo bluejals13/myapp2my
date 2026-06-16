@@ -31,9 +31,9 @@ public class AuthService {    //    jti 접근 토큰 로직 관리 파일
         // 0. parse once
         Claims claims = jwtProvider.parseClaims(refreshToken);
 
-        String type = claims.get("type", String.class);
+        // String type = claims.get("type", String.class);
 
-        if (!"refresh".equals(type)) {                        //    리프레시 타입과 다르면 버림
+        if (!"refresh".equals(claims.get("type"))) {                        //    리프레시 타입과 다르면 버림
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
             }
 
