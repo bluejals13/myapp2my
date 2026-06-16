@@ -13,5 +13,7 @@ public interface AuditRepository extends JpaRepository<Audit, Long> { JpaSpecifi
     List<Audit> findByAction(String action);
 
     List<Audit> findByUserIdAndAction(Long userId, String action);
+
+    Page<Audit> findAll(Pageable pageable);
     }
 }                                                                     
