@@ -27,16 +27,16 @@ public class UserRoleService {
     ) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow();        
-        
+            .orElseThrow();
+
+        Set<Role> roles =
+            new HashSet<>(
+                roleRepository.findAllById(roleIds)
+            );
+
         if (roles.size() != roleIds.size()) {
             throw new IllegalArgumentException("Role not found");
-        }
-                
-        Set<Role> roles =
-                new HashSet<>(
-                        roleRepository.findAllById(roleIds)
-                );
+            }
 
         user.setRoles(roles);
     }
