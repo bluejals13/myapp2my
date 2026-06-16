@@ -8,7 +8,7 @@ type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
 type User = {
   id: number;
   username: string;
-  permissions?: string[];
+  permissions: string[];
   status: UserStatus;
 };
 
@@ -52,7 +52,7 @@ export default function UserAdminPage() {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
     try { setActionLoading(id);
-      await apiFetch(`/admin/users/${id}`, { method: "DELETE" });
+      await apiFetch(`/api/admin/users/${id}`, { method: "DELETE" });
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch {
       alert("삭제 실패");
@@ -110,8 +110,8 @@ export default function UserAdminPage() {
             <div>{user.username}</div>
 
             <div>
-              <span className={`${styles.status} ${styles[user.status.toLowerCase()]}`}>
-                {user.status}
+              <span className={`${styles.status} ${styles[user.status?.toLowerCase() ?? "active"]}`}>
+                {user.status ?? "UNKNOWN"}
               </span>
             </div>
 
