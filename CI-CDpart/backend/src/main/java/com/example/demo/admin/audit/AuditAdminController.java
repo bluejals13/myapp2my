@@ -36,8 +36,7 @@ public class AuditAdminController {
     }
     
     @GetMapping
-    public Page<AuditResponse> getAudits(
-        Pageable pageable
-    );
-    
+    public Page<AuditResponse> getAudits(Pageable pageable) {
+        return auditService.getAudits(pageable);
+    }
 }
