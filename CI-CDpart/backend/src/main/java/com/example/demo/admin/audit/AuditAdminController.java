@@ -2,6 +2,7 @@ package com.example.demo.admin.audit;
 
 import com.example.demo.admin.audit.dto.AuditResponse;
 import com.example.demo.admin.audit.service.AuditAdminService;
+import com.example.demo.admin.audit.service.AuditService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,8 @@ import java.util.List;
 public class AuditAdminController {
 
     private final AuditAdminService auditAdminService;
-
+    private final AuditService auditService;
+    
     @PreAuthorize("hasAuthority('AUDIT_READ')")
     @GetMapping
     public List<AuditResponse> getAudits(
