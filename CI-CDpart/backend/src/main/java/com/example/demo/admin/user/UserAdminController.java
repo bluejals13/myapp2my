@@ -1,9 +1,10 @@
 package com.example.demo.admin.user;
 
-import com.example.demo.admin.user.dto.UserStatusRequest;
 import com.example.demo.admin.user.service.UserAdminService;
 import com.example.demo.admin.user.service.UserRoleService;
 import com.example.demo.admin.user.dto.UserRoleRequest;
+import com.example.demo.admin.user.dto.UserStatusRequest;
+import com.example.demo.admin.user.dto.AdminUserResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class UserAdminController {
     // 전체 사용자 조회
     @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
-    public List<UserAdminService> getUsers() {
+    public List<AdminUserResponse> getUsers() {
         return userAdminService.getUsers();
     }
 
