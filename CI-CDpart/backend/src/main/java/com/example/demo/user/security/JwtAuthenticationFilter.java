@@ -72,15 +72,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
                  return;
             }
             
-                Long userId = jwtProvider.getUserId(token);
+            Long userId = jwtProvider.getUserId(token);
             
-                User user = userRepository.findWithRolesById(userId).orElseThrow();
+            User user = userRepository.findWithRolesById(userId).orElseThrow();
             
-                String tokenJti = jwtProvider.getJti(token); // 🔥 중요
+            String tokenJti = jwtProvider.getJti(token); // 🔥 중요
 
-                // 3. Redis의 현재 활성 세션 조회
-                String activeJti = redisTemplate.opsForValue()
-                        .get("active-jti:" + userId);
+            // 3. Redis의 현재 활성 세션 조회
+            String activeJti = redisTemplate.opsForValue()
+                    .get("active-jti:" + userId);
             
             // active-jti 없고            
             // 현재 활성 토큰이 아니면 실패
@@ -95,32 +95,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // 각 �
             }
             System.out.println("tokenJti = " + tokenJti);
             System.out.println("activeJti = " + activeJti);
-                // 4. 인증 성공
-                CustomUserPrincipal principal = new CustomUserPrincipal(userId);
+            // 4. 인증 성공
+            CustomUserPrincipal principal = new CustomUserPrincipal(userId);
 
-                List<GrantedAuthority> authorities = new ArrayList<>();
+            List<GrantedAuthority> authorities = new ArrayList<>();
                     
-                // ROLE
-                user.getRoles().forEach(r ->
-                    authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getName()))
+            // ROLE
+            user.getRoles().forEach(r ->
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getName()))
                 );
                 
-                // PERMISSION
-                user.getRoles().forEach(r ->
-                    r.getPermissions().forEach(p ->
-                        authorities.add(new SimpleGrantedAuthority(p.getName()))
+            // PERMISSION
+            user.getRoles().forEach(r ->
+                r.getPermissions().forEach(p ->
+                    authorities.add(new SimpleGrantedAuthority(p.getName()))
                     )
                 );
             
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                principal,
-                                null,
-                                //List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                                authorities
-                        );
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken( principal, null, authorities );
+            
+            auth.getAuthorities().forEach(a -> System.out.println(a.getAuthority()));
+            
+            SecurityContextHolder.getContext().setAuthentication(auth);
             
 
         } catch (Exception e) {
