@@ -47,6 +47,11 @@ export default function UserAdminPage() {
     if (!canRead) return;
     fetchUsers();
   }, [authLoading, canRead, fetchUsers]);
+  
+  const normalizeStatus = (status?: string) => {    // 모르면 BLOCKED
+    if (!status || status === "UNKNOWN") return "BLOCKED";
+    return status;
+  };
 
   const deleteUser = async (id: number) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -110,8 +115,8 @@ export default function UserAdminPage() {
             <div>{user.username}</div>
 
             <div>
-              <span className={`${styles.status} ${styles[user.status?.toLowerCase() ?? "active"]}`}>
-                {user.status ?? "UNKNOWN"}
+              <span className={`${styles.status} ${styles[normalizeStatus(user.status).toLowerCase()]}`}>
+                {normalizeStatus(user.status)}
               </span>
             </div>
 
