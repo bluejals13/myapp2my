@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/roles")
+@RequestMapping("/api/admin/roles")
 @RequiredArgsConstructor
 public class RoleAdminController {
 
