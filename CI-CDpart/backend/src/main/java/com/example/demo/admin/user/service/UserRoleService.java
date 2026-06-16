@@ -4,6 +4,7 @@ import com.example.demo.user.domain.User;
 import com.example.demo.user.repository.UserRepository;
 import com.example.demo.admin.role.domain.Role;
 import com.example.demo.admin.role.repository.RoleRepository;
+import com.example.demo.admin.audit.domain.AuditAction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
