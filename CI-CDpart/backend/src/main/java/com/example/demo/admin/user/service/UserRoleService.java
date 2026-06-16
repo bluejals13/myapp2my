@@ -24,29 +24,30 @@ public class UserRoleService {
     private final RoleRepository roleRepository;
     private final AuditService auditService;
 
+    @Transactional
     public void assignRoles(
-            Long adminId,
-            Long userId,
-            List<Long> roleIds
+        Long adminId,
+        Long userId,
+        List<Long> roleIds
     ) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            .orElseThrow();
 
         Set<Role> roles = new HashSet<>(
-                roleRepository.findAllById(roleIds)
+            roleRepository.findAllById(roleIds)
         );
 
         if (roles.size() != roleIds.size()) {
             throw new IllegalArgumentException("Role not found");
         }
 
-        user.setRoles(roles); // ✅ 실제 적용
+        user.setRoles(roles);
 
         auditService.log(
-                adminId,
-                AuditAction.ROLE_ASSIGN,
-                userId
+            adminId,
+            AuditAction.ROLE_ASSIGN,
+            userId
         );
     }
 }
