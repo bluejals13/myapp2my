@@ -22,6 +22,11 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
     private final UserRoleService userRoleService;
     private final SecurityUtil securityUtil;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("UserAdminController LOADED");
+    }
     
     @PreAuthorize("hasAuthority('USER_DELETE')")
     @DeleteMapping("/{id}")
