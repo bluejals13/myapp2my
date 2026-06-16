@@ -20,12 +20,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+
 public class UserAdminService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
-
+    @Transactional
     public void deleteUser(Long adminId, Long userId) {
 
         User user = userRepository.findById(userId)
@@ -39,3 +39,19 @@ public class UserAdminService {
                 userId
         );
     }
+    
+    @Transactional
+    public void changeStatus(Long adminId, Long userId, UserStatus status) {
+
+        User user = userRepository.findById(userId)
+            .orElseThrow();
+
+        user.changeStatus(status);
+
+        auditService.log(
+            adminId,
+            AuditAction.USER_STATUS_CHANGE,
+            userId
+        );
+    }
+}
