@@ -20,7 +20,7 @@ public class Audit {
 
     private Long targetId;    // 대상 ID
 
-    private String result;    // 결과
+    private String result;    // 작업 성공/실패
 
     private LocalDateTime createdAt;
 }
