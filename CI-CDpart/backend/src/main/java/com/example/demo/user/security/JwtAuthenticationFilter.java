@@ -116,6 +116,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // ê° í†
                     new UsernamePasswordAuthenticationToken( principal, null, authorities );
             
             auth.getAuthorities().forEach(a -> System.out.println(a.getAuthority()));
+            System.out.println("roles size = " + user.getRoles().size());
+            
+            user.getRoles().forEach(r -> {
+                System.out.println("ROLE = " + r.getName());
+                System.out.println("PERMS = " + r.getPermissions().size());
+            });
             
             SecurityContextHolder.getContext().setAuthentication(auth);
             
