@@ -18,7 +18,8 @@ import java.util.List;
 public class UserAdminService {
 
     private final UserRepository userRepository;
-
+    private final AuditService auditService;
+    
     @Transactional(readOnly = true)
     public List<AdminUserResponse> getUsers() {
         return userRepository.findAll()
