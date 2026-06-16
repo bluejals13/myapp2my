@@ -51,7 +51,7 @@ public class UserController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60 * 24 * 7);
-        cookie.setSecure(false); // 로컬이면 false, HTTPS면 true
+        cookie.setSecure(true); // 로컬이면 false, HTTPS면 true
 
         httpResponse.addCookie(cookie);
 
