@@ -49,7 +49,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
     // 1. 접근 토큰 생성
     public String createAccessToken(Long userId, String username) {    // String ( username > role ) 으로 나중 role 추가 시
     Date now = new Date();
-    Date expiry = new Date(now.getTime() + expiration);
+    Date expiry = new Date(now.getTime() + accessExpiration);
 
     String jti = UUID.randomUUID().toString();
 
@@ -66,7 +66,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
     // 1. 리프레시 토큰 생성    
     public String createRefreshToken(Long userId) {
     Date now = new Date();
-    Date expiry = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000L);
+    Date expiry = new Date(now.getTime() + refreshExpiration);
 
     String jti = UUID.randomUUID().toString();
 
