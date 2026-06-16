@@ -18,7 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;    // 요청 당 1회 실행 필터
 import org.springframework.data.redis.core.RedisTemplate;    // redis 템플릿 으로 캐시 운용
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.stream.Collectors;
 import java.io.IOException;
