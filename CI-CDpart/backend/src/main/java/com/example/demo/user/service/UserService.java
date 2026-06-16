@@ -77,7 +77,7 @@ public class UserService {
         redisTemplate.opsForValue().set( // 새 세션 저장
             "refresh:" + user.getId(),
             refreshToken,
-            Duration.ofDays(7)
+            Duration.ofMinutes(30)
         );
         // 리프레시 와 redis 연결 나
         
