@@ -25,33 +25,28 @@ public class UserRoleService {
     private final AuditService auditService;
 
     public void assignRoles(
+            Long adminId,
             Long userId,
             List<Long> roleIds
     ) {
 
         User user = userRepository.findById(userId)
-            .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Set<Role> roles =
-            new HashSet<>(
+        Set<Role> roles = new HashSet<>(
                 roleRepository.findAllById(roleIds)
-            );
+        );
 
         if (roles.size() != roleIds.size()) {
             throw new IllegalArgumentException("Role not found");
-            }
+        }
 
-    //user.setRoles(roles);
-    Long adminId = ((CustomUserPrincipal)
-        SecurityContextHolder.getContext()
-        .getAuthentication()
-        .getPrincipal()
-        ).getUserId();
+        user.setRoles(roles); // ✅ 실제 적용
 
         auditService.log(
-        adminId,
-        AuditAction.USER_DELETE,
-        user.getId()
+                adminId,
+                AuditAction.ROLE_ASSIGN,
+                userId
         );
     }
 }
