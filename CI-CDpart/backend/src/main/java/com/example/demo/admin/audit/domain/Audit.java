@@ -27,4 +27,20 @@ public class Audit {
 
     @CreatedDate
     private LocalDateTime createdAt;
+    
+    public static Audit create(
+        Long actorId,
+        AuditAction action,
+        Long targetId
+    ) {
+        Audit audit = new Audit();
+
+        audit.actorId = actorId;
+        audit.action = action;
+        audit.targetId = targetId;
+        audit.createdAt = LocalDateTime.now();
+
+        return audit;
+    }
+    
 }
