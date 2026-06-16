@@ -22,6 +22,17 @@ public class UserAdminService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
+    
+    public List<AdminUserResponse> getUsers() {
+        return userRepository.findAll().stream()
+            .map(user -> new AdminUserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getStatus()
+            ))
+        .toList();
+    }
+    
     @Transactional
     public void deleteUser(Long adminId, Long userId) {
 
