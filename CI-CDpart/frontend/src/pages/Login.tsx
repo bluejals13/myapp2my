@@ -51,7 +51,7 @@ export default function Login() {
       await login(data.accessToken);
 
       // 4. 이동
-      navigate("/main");
+      navigate("/");
 
     } catch (e: any) {
         setErrorMessage(

@@ -16,7 +16,7 @@ import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {    // 리프레시 토큰 생성 파일
+public class AuthService {    //    jti 접근 토큰 로직 관리 파일
 
     private final JwtProvider jwtProvider;
     private final RedisTemplate<String, String> redisTemplate;
@@ -24,16 +24,16 @@ public class AuthService {    // 리프레시 토큰 생성 파일
 
     public TokenResponse refresh(String refreshToken) {
 
-        if (!jwtProvider.validateToken(refreshToken)) {
+        if (!jwtProvider.validateToken(refreshToken)) {        //    jwt 리프레시 토큰 없으면 버림
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
             }
 
         // 0. parse once
         Claims claims = jwtProvider.parseClaims(refreshToken);
 
-        String type = claims.get("type", String.class);
+        // String type = claims.get("type", String.class);
 
-        if (!"refresh".equals(type)) {
+        if (!"refresh".equals(claims.get("type"))) {                        //    리프레시 타입과 다르면 버림
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
             }
 
@@ -44,16 +44,16 @@ public class AuthService {    // 리프레시 토큰 생성 파일
         String saved = redisTemplate.opsForValue()
                 .get("refresh:" + userId);
 
-        // 3. 검증
+        // 3. 검증 null 값 이나 혹은 없는 경우(로그아웃, 재로그인) refreshToken 과 비교 후 기존 토큰 차단
         if (saved == null || !saved.equals(refreshToken)) {
             throw new BadCredentialsException("INVALID_REFRESH_TOKEN");
         }
 
         // 4. 유저 조회
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow();    //    (() ->    new BadCredentialsException("USER_NOT_FOUND") );
 
-        // 5. 새로운 Access Token 발급
+        // 5. 새로운 접근 토큰 발급 username -> role 변경 예정 * 리프레시 토큰은 무관함
         String newAccessToken =
             jwtProvider.createAccessToken(user.getId(), user.getUsername());
 
@@ -61,7 +61,7 @@ public class AuthService {    // 리프레시 토큰 생성 파일
         redisTemplate.opsForValue().set(
             "active-jti:" + userId,
             newJti,
-            Duration.ofDays(7)
+            Duration.ofMinutes(30)
             );
 
         return new TokenResponse(newAccessToken);

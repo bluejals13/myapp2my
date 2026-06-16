@@ -5,7 +5,8 @@ import EmptyLayout from "./layout/EmptyLayout";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Main from "./pages/Main";
+import Main from "./pages/FMa/Main";
+
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -14,6 +15,10 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Monitor from "./pages/Monitor";
+
+import MenuPage from "./pages/Fmenu/MenuPage";
+import PermissionPage from "./pages/Fpermi/PermissionPage";
+import UserAdminPage from "./pages/FUsAd/UserAdminPage";
 
 export default function App() {
   return (
@@ -36,10 +41,16 @@ export default function App() {
         {/* Layout 있는 영역 */}
         <Route element={<Layout />}>
           <Route path="/" element={<Main />} />
-          <Route path="/main" element={<Main />} />
+
+          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/permission" element={<PermissionPage />} />
+          <Route path="/user" element={<UserAdminPage />} />
+
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/home" element={<Home />} />
+
+
         </Route>
 
       </Routes>

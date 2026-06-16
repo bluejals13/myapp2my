@@ -1,11 +1,16 @@
 // AuthContext.tsx UI 상태
 import { createContext, useContext, useEffect, useState } from "react";
-import { apiFetch } from "../api";
-import { authStorage } from "./auth.storage";
+//import { apiFetch } from "../api";
+import { authStorage } from "./auth.storage";	// jwt 토큰 키 get, set, clear
+import { apiWithAuth } from "./auth.interceptor";
 
-export type User = {
+export let isLoggedOut = false;
+
+export type User = {	// 👈 RBAC 추가 수정 부분
   id: number;
   username: string;
+  roles: string[];        // 👈 추가 (ADMIN, USER, MODERATOR)
+  permissions: string[];  // 👈 선택 (USER_READ, USER_WRITE ...)
 };
 
 type AuthContextType = {
@@ -17,6 +22,9 @@ type AuthContextType = {
   login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+
+  hasRole: (role: string) => boolean;           // 👈 추가
+  hasPermission: (p: string) => boolean;        // 👈 추가
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -26,42 +34,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!token && !!user;
+
+const hasRole = (role: string) =>       // 👈 추가
+  (user?.roles ?? []).some(r => r.toLowerCase() === role.toLowerCase());
+
+const hasPermission = (p: string) =>		// 👈 추가
+  (user?.permissions ?? []).includes(p);
 
   const refreshUser = async () => {
     try {
-      const data = await apiFetch<User>("/api/users/me");
+      const data = await apiWithAuth<User>("/api/users/me");
       setUser(data);
-    } catch {
-      logout();
+    } catch (e: any) {
+    	if (e?.status === 401) {
+      	await logout();
+      }
     }
   };
 
-  const login = async (newToken: string) => {
-    authStorage.set(newToken);
-    setToken(newToken);
-    
-    const me = await apiFetch<User>("/api/users/me");
-    
-    setUser(me);
+  const login = async (newToken: string) => { isLoggedOut = false;
+  authStorage.set(newToken);
+  setToken(newToken);
+
+  try {
+      const me = await apiWithAuth<User>("/api/users/me");
+      setUser(me);
+    } catch (e) {
+      authStorage.clear();
+      setToken(null);
+      setUser(null);
+      throw e;
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try { isLoggedOut = true;
+    await fetch("/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }); } catch{ }
+    
     authStorage.clear();
     setToken(null);
     setUser(null);
   };
 
-  useEffect(() => {
-    const init = async () => {
-      if (authStorage.get()) {
-        await refreshUser();
-      }
-      setIsLoading(false);
-    };
+// 초기 로그인 복구
+useEffect(() => { const init = async () => {
+    try { const token = authStorage.get();
+      if (!token) { setIsLoading(false); return; }
+    await refreshUser();     }
+    catch (e) { authStorage.clear(); setToken(null); setUser(null); }
+    finally { setIsLoading(false); }         };   
+  init();
+}, []);
 
-    init();
-  }, []);
+// refresh 실패 로그아웃 동기화
+useEffect(() => {
+  const handler = () => {
+    logout();
+  };
+
+  window.addEventListener("auth:logout", handler);
+
+  return () => {
+    window.removeEventListener("auth:logout", handler);
+  };
+}, []);
 
   return (
     <AuthContext.Provider
@@ -73,6 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         refreshUser,
+        hasRole,		// 👈 추가
+        hasPermission,	// 👈 추가
       }}
     >
       {children}

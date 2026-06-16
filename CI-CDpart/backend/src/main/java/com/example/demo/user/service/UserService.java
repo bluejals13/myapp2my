@@ -7,9 +7,10 @@ import com.example.demo.user.exception.DuplicateUserException;
 import com.example.demo.user.exception.UserNotFoundException;
 import com.example.demo.user.jwt.JwtProvider;
 import com.example.demo.user.repository.UserRepository;
+import com.example.demo.admin.role.domain.Role;
+import com.example.demo.admin.permission.domain.Permission;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,21 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration; // 시간
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     
-    private final AuthService authService;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     // 회원가입
+    @Transactional
     public UserResponse signup(SignupRequest req) {
 
-        if (userRepository.findByUsername(req.username()).isPresent()) {
+        if (userRepository.existsByUsername(req.username())) {
             throw new DuplicateUserException("이미 존재하는 유저");
         }
 
@@ -46,50 +48,73 @@ public class UserService {
     }
 
     // 로그인
-    public LoginResponse login(LoginRequest req) {
-
+    public LoginResult login(LoginRequest req) {        
+        
         User user = userRepository.findByUsername(req.username())
                 .orElseThrow(() -> new BadCredentialsException("INVALID_CREDENTIALS"));
 
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
+                
+        System.out.println("password raw = " + req.password());
+        System.out.println("password db  = " + user.getPassword());
+        
+        System.out.println("match = " + passwordEncoder.matches(req.password(), user.getPassword()));
         // 접근 과 redis 연결 가
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
-
         String jti = jwtProvider.getJti(accessToken);
 
         redisTemplate.opsForValue().set(
             "active-jti:" + user.getId(),
             jti,
-            Duration.ofDays(7)
+            Duration.ofMinutes(30)
             );
+        
         // 접근 과 redis 연결 나
         // 리프레시 와 redis 연결 가
-        
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
         
-        redisTemplate.delete("refresh:" + user.getId()); // 기존 세션 제거 (명확하게)
+        // redisTemplate.delete("refresh:" + user.getId()); // 기존 세션 제거 (명확하게)
 
         redisTemplate.opsForValue().set( // 새 세션 저장
             "refresh:" + user.getId(),
             refreshToken,
-            Duration.ofDays(7)
+            Duration.ofMinutes(30)
         );
         // 리프레시 와 redis 연결 나
         
-        return new LoginResponse(accessToken, "Bearer");
+        return new LoginResult(accessToken, "Bearer", refreshToken);
     }
 
     // 내 정보 조회
-    public UserResponse getMe(Long userId) {
+    // 로그인 및 보안 컨텍스트 용 유저반응 겟미
+    public MeResponse getMe(Long userId) {
 
-        User user = userRepository.findById(userId)
-            .orElseThrow();
-
-        return new UserResponse(user.getId(), user.getUsername());
+        User user = userRepository.findWithRolesById(userId)
+            .orElseThrow(() -> new UserNotFoundException("유저 없음"));
+        
+            // 롤 퍼미션 관리자 용 미반응 겟미
+        List<String> roles = user.getRoles()
+            .stream()
+            .map(Role::getName)
+            .toList();
+        
+        List<String> permissions = user.getRoles()
+            .stream()
+            .flatMap(r -> r.getPermissions().stream())
+            .map(Permission::getName)
+            .distinct()
+            .toList();
+        
+        return new MeResponse(
+            user.getId(),
+            user.getUsername(),
+            roles,
+            permissions
+        );
     }
-
+            
     // 비밀번호 변경
     @Transactional
     public void updatePassword(Long userId, UpdatePasswordRequest req) {
@@ -101,6 +126,10 @@ public class UserService {
         }
 
         user.updatePassword(passwordEncoder.encode(req.password()));
+        
+        redisTemplate.delete("active-jti:" + userId);
+        redisTemplate.delete("refresh:" + userId);
+        
     }
 
     // 내부 공통 메서드

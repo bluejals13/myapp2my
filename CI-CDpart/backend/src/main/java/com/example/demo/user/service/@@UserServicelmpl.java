@@ -1,99 +1,113 @@
 /*
 package com.example.demo.user.service;
 
-import com.example.demo.user.dto.request.*;
-import com.example.demo.user.dto.response.UserResponse;
-import com.example.demo.user.entity.User;
+import com.example.demo.user.domain.User;
+import com.example.demo.user.dto.*;
+import com.example.demo.user.security.*;
 import com.example.demo.user.exception.DuplicateUserException;
 import com.example.demo.user.exception.UserNotFoundException;
+import com.example.demo.user.jwt.JwtProvider;
 import com.example.demo.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.time.Duration; // 시간
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
-
+public class UserService {
+    
+    private final AuthService authService;
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-    @Override
-    public void signup(SignupRequest request) {
+    // 회원가입
+    public UserResponse signup(SignupRequest req) {
 
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new DuplicateUserException("이미 존재하는 사용자입니다.");
+        if (userRepository.findByUsername(req.username()).isPresent()) {
+            throw new DuplicateUserException("이미 존재하는 유저");
         }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        userRepository.save(user);
-    }
-
-    @Override
-    public String login(LoginRequest request) {
-
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
-        return "dummy-token"; // JWT 붙이면 여기서 토큰 발급
-    }
-
-    @Override
-    public UserResponse getMyInfo(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
-        return new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail()
+        User user = new User(
+                req.username(),
+                passwordEncoder.encode(req.password())
         );
+
+        User saved = userRepository.save(user);
+
+        return new UserResponse(saved.getId(), saved.getUsername());
     }
 
-    @Override
-    public void updateUser(Long userId, UpdateUserRequest request) {
+    // 로그인
+    public LoginResponse login(LoginRequest req) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByUsername(req.username())
+                .orElseThrow(() -> new BadCredentialsException("INVALID_CREDENTIALS"));
 
-        if (request.getUsername() != null) {
-            user.setUsername(request.getUsername());
+        if (!passwordEncoder.matches(req.password(), user.getPassword())) {
+            throw new BadCredentialsException("INVALID_CREDENTIALS");
         }
+        // 접근 과 redis 연결 가
+        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUsername());
 
-        if (request.getEmail() != null) {
-            user.setEmail(request.getEmail());
-        }
+        String jti = jwtProvider.getJti(accessToken);
+
+        redisTemplate.opsForValue().set(
+            "active-jti:" + user.getId(),
+            jti,
+            Duration.ofDays(7)
+            );
+        // 접근 과 redis 연결 나
+        // 리프레시 와 redis 연결 가
+        
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+        
+        redisTemplate.delete("refresh:" + user.getId()); // 기존 세션 제거 (명확하게)
+
+        redisTemplate.opsForValue().set( // 새 세션 저장
+            "refresh:" + user.getId(),
+            refreshToken,
+            Duration.ofDays(7)
+        );
+        // 리프레시 와 redis 연결 나
+        
+        return new LoginResponse(accessToken, "Bearer");
     }
 
-    @Override
-    public void updatePassword(Long userId, UpdatePasswordRequest request) {
+    // 내 정보 조회
+    public UserResponse getMe(Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+            .orElseThrow();
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-        }
-
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        return new UserResponse(user.getId(), user.getUsername());
     }
 
-    @Override
-    public void deleteUser(Long userId) {
+    // 비밀번호 변경
+    @Transactional
+    public void updatePassword(Long userId, UpdatePasswordRequest req) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        User user = getUser(userId);
 
-        userRepository.delete(user);
+        if (req.password().length() < 8) {
+            throw new IllegalArgumentException("PASSWORD_TOO_SHORT");
+        }
+
+        user.updatePassword(passwordEncoder.encode(req.password()));
+    }
+
+    // 내부 공통 메서드
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("유저 없음"));
     }
 }
 */

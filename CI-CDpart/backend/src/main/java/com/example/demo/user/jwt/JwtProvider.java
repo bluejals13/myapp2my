@@ -1,56 +1,73 @@
 package com.example.demo.user.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
+import io.jsonwebtoken.security.Keys;    // jwt 서명 용 보안 키 와 jjwt : HS256 방식 대칭키
+import jakarta.annotation.PostConstruct; // 빈 생성 후 초기화 : 보안 키 검증용
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
-import java.util.UUID;
+import java.security.Key;     // 보안 키 객체
+import java.util.Date;        // 만료 날짜
+import java.util.UUID;        // 만료 jti
+import lombok.extern.slf4j.Slf4j;    // 기본 로거 호출용
 
+@Slf4j
 @Component
 public class JwtProvider {    // 각 토큰 제공 파일
-
-    // 환경 변수 는 나중에 고려 1.
+    
+    // application.yaml 부분의 환경 변수 일치 확인 할 것
+    
     @Value("${jwt.secret}")
     private String secretKey;
 
-    // 환경 변수 는 나중에 고려 2.
     @Value("${jwt.expiration}")
     private long expiration;
 
+    @Value("${jwt.access-expiration}")
+    private long accessExpiration;
+
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpiration;
+    
+    //
+    
     private Key key;
     // secretKey 길이 32바이트 미만이면 런타임 에러
     @PostConstruct
-    public void init() {
+    public void init() {            //Secret Key 검증 부분
+        if (secretKey == null || secretKey.length() < 32) {
+            throw new IllegalStateException(
+                "JWT Secret Key must be at least 32 characters."
+                );
+            }  
+
         this.key = Keys.hmacShaKeyFor(
             secretKey.getBytes(StandardCharsets.UTF_8)
         );
     }
 
     // 1. 접근 토큰 생성
-    public String createAccessToken(Long userId, String username) {
+    public String createAccessToken(Long userId, String username) {    // String ( username > role ) 으로 나중 role 추가 시
     Date now = new Date();
-    Date expiry = new Date(now.getTime() + expiration);
+    Date expiry = new Date(now.getTime() + accessExpiration);
 
     String jti = UUID.randomUUID().toString();
 
     return Jwts.builder()
             .setSubject(String.valueOf(userId))
             .setId(jti) // 🔥 핵심
-            .claim("username", username)    // 나중에 변경 >    .claim("role", role)   .claim("type", "access")
+            .claim("username", username) 
+            //.claim("type", "access") // 나중에 필터 에서 string = claims.get("type" ~~~~) \n if (!"access".equals(type))
             .setIssuedAt(now)
             .setExpiration(expiry)
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
             .compact();
 }
     // 1. 리프레시 토큰 생성    
     public String createRefreshToken(Long userId) {
     Date now = new Date();
-    Date expiry = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000L);
+    Date expiry = new Date(now.getTime() + refreshExpiration);
 
     String jti = UUID.randomUUID().toString();
 
@@ -60,7 +77,7 @@ public class JwtProvider {    // 각 토큰 제공 파일
             .claim("type", "refresh")
             .setIssuedAt(now)
             .setExpiration(expiry)
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(key, SignatureAlgorithm.HS256)        // HS256(대칭키) 디지털 서명 핵심 보안층
             .compact();
 }
     
@@ -89,7 +106,19 @@ public class JwtProvider {    // 각 토큰 제공 파일
             parseClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            
+            // 필요 시 로그
+            log.warn("JWT validation failed: {}", e.getMessage());
+            
             return false;
         }
     }
+    
+    // 5. role 추출 username -> role 변경 예정
+    // JwtAuthenticationFilter 에서 Authority 생성 시 사용
+    public String getRole(String token) {
+        return parseClaims(token)
+            .get("role", String.class);
+    }
+    
 }

@@ -1,10 +1,18 @@
 package com.example.demo.user.domain;
 
+import com.example.demo.user.domain.UserStatus;
+
+import com.example.demo.admin.role.domain.Role;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -13,25 +21,58 @@ import lombok.AccessLevel;
 @AllArgsConstructor
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(unique = true)
-	private String username;
+    @Column(unique = true)
+    private String username;
 
-	private String password;
+    private String password;
 
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
+    private LocalDateTime passwordChangedAt; // 비번 변경 시간
 
-	public static User create(String username, String encodedPassword) {
-		return new User(username, encodedPassword);
-	}
+    @Enumerated(EnumType.STRING)    // 유저 상태 어드민 관리 페이지 사용
+    @Column(nullable = false)
+    private UserStatus status;
 
-	public void updatePassword(String encodedPassword) {
-		this.password = encodedPassword;
-	}
+    // 기본 생성자 (핵심 수정)
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.passwordChangedAt = null;
+        this.status = UserStatus.ACTIVE;
+    }
+
+    // 팩토리 메서드
+    public static User create(String username, String encodedPassword) {
+        return new User(username, encodedPassword);
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+        this.passwordChangedAt = LocalDateTime.now();
+    }
+
+    public LocalDateTime getPasswordChangedAt() {
+        return passwordChangedAt;
+    }
+    
+    public void changeStatus(UserStatus status) {
+    this.status = status;
+    }
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name="user_id"),
+        inverseJoinColumns = @JoinColumn(name="role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    public void setRoles(Set<Role> roles) {
+    this.roles.clear();
+    this.roles.addAll(roles);
+    }
+
 }

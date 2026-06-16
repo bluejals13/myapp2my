@@ -6,8 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer; // csrf disable 쓸 때
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer; // cors 설정 시
-
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.user.jwt.JwtProvider;
+import com.example.demo.user.repository.UserRepository;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
@@ -29,17 +30,15 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {         // 기본 접근 보안설정
 
     private final JwtProvider jwtProvider;
-    private final TokenBlacklistService tokenBlacklistService;
+    // private final TokenBlacklistService tokenBlacklistService;
     private final RedisTemplate<String, String> redisTemplate;
-    
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate);
-        }
+    private final UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -68,13 +67,14 @@ public class SecurityConfig {         // 기본 접근 보안설정
             .httpBasic(AbstractHttpConfigurer::disable)   // 🔥 추가
             
             .authorizeHttpRequests(auth -> auth
-               .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-               .requestMatchers("/api/auth/**").permitAll()
-               .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-               .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/admin/**").authenticated()
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/actuator/prometheus").permitAll() //헬스체크 보안 허용
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((req, res, e) -> {
