@@ -20,6 +20,7 @@ import java.util.List;
 public class UserAdminService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final AuditService auditService;
     
     @Transactional(readOnly = true)
