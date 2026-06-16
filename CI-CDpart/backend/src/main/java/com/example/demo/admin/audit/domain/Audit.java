@@ -14,7 +14,10 @@ public class Audit {
     private Long id;
 
     private Long userId;      // 누가 했는지
-    private String action;    // 무엇을 했는지 (CREATE, DELETE 등)
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuditAction action;   // 무엇을 했는지 (CREATE, DELETE 등)
     
     private String targetType; // 대상 타입
 
