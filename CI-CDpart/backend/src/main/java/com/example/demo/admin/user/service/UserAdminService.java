@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class UserAdminService {
