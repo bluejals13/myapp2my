@@ -1,8 +1,6 @@
 // api.ts HTTP만
 import { authStorage } from "./auth/auth.storage";	// jwt 토큰 키 get, set, clear
 
-const BASE_URL = "/api";
-
 export async function apiFetch<T>(
   url: string,
   options: RequestInit = {}
@@ -22,7 +20,7 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const res = await fetch(BASE_URL + url, {
+  const res = await fetch("/api" + url, {
     ...options,
     headers,
   });
