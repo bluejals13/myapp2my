@@ -39,11 +39,6 @@ public class SecurityConfig {         // 기본 접근 보안설정
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider, tokenBlacklistService, redisTemplate, userRepository); // UserRepository 추가 계획
-        }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
