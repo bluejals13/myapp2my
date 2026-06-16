@@ -1,5 +1,7 @@
 package com.example.demo.admin.role.service;
 
+import com.example.demo.admin.audit.domain.AuditAction;
+
 import com.example.demo.admin.role.domain.Role;
 import com.example.demo.admin.role.dto.RoleRequest;
 import com.example.demo.admin.role.dto.RoleResponse;
