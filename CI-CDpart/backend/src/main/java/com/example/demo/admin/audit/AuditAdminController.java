@@ -30,4 +30,10 @@ public class AuditAdminController {
     public AuditResponse getAudit(@PathVariable Long id) {
         return auditAdminService.getAudit(id);
     }
+    
+    @GetMapping
+    public Page<AuditResponse> getAudits(
+        Pageable pageable
+    )
+    
 }
