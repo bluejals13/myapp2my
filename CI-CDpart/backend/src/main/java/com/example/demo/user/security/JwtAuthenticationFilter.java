@@ -22,6 +22,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.stream.Collectors;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
