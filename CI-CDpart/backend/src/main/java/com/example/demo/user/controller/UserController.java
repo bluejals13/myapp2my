@@ -86,13 +86,19 @@ public class UserController {
             return ResponseEntity.status(401).body("INVALID_REFRESH_TOKEN");
         }
     }
-
-    // me
+    // 내 정보 조회
+    // 로그인 및 보안 컨텍스트 용 유저반응 겟미
     @GetMapping("/users/me")
     public UserResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
         return userService.getMe(principal.getUserId());
     }
-
+    
+    // 롤 퍼미션 관리자 용 미반응 겟미
+    @GetMapping("/users/me")
+    public MeResponse getMe(@AuthenticationPrincipal CustomUserPrincipal principal) {
+        return userService.getMe(principal.getUserId());
+    }
+    
     // password change
     @PatchMapping("/users/me/password")
     public void updatePassword(
