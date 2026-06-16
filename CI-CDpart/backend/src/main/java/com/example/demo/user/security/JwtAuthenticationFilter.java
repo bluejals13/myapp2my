@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {    // ê° í†
                     .flatMap(r -> r.getPermissions().stream())
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
                     .distinct()
-                    .toList();
+                    .collect(Collectors.toList());
 
 
             
