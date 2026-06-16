@@ -7,6 +7,8 @@ import com.example.demo.user.exception.DuplicateUserException;
 import com.example.demo.user.exception.UserNotFoundException;
 import com.example.demo.user.jwt.JwtProvider;
 import com.example.demo.user.repository.UserRepository;
+import com.example.demo.admin.role.domain.Role;
+import com.example.demo.admin.permission.domain.Permission;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
