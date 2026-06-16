@@ -21,6 +21,7 @@ public class UserRoleService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AuditService auditService;
 
     public void assignRoles(
             Long userId,
