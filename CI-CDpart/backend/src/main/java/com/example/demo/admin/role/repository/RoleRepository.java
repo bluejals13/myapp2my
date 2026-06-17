@@ -9,10 +9,7 @@ import java.util.List;
 public interface RoleRepository extends JpaRepository<Role, Long> {
     
     @EntityGraph(attributePaths = "permissions")
-    @Query("""
-        select r
-        from Role r
-    """)
+    @Query("select r from Role r join fetch r.permissions")
     List<Role> findAllWithPermissions();    // 순수 퍼미션 조회
     
     @Query("""
