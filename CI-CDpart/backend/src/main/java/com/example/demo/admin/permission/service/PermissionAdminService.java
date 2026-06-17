@@ -2,7 +2,14 @@ package com.example.demo.admin.permission.service;
 
 import com.example.demo.admin.permission.dto.PermissionResponse;
 import com.example.demo.admin.permission.repository.PermissionRepository;
-
+//--
+import com.example.demo.admin.permission.domain.Permission;
+import com.example.demo.admin.permission.dto.PermissionDetailResponse;
+import com.example.demo.admin.role.domain.Role;
+import com.example.demo.admin.role.repository.RoleRepository;
+import com.example.demo.user.domain.User;
+import com.example.demo.user.repository.UserRepository;
+//--
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +22,26 @@ import java.util.List;
 public class PermissionAdminService {
 
     private final PermissionRepository permissionRepository;
-
+    //--
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    //--
     public List<PermissionResponse> getPermissions() {
         return permissionRepository.findAll()
                 .stream()
                 .map(PermissionResponse::from)
                 .toList();
     }
+    //--
+    public PermissionDetailResponse getPermissionDetail(Long id) {
+    
+        Permission permission = permissionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Permission not found"));
+    
+        List<Role> roles = roleRepository.findByPermissionId(id);
+        List<User> users = userRepository.findByPermissionId(id);
+    
+        return PermissionDetailResponse.from(permission, roles, users);
+    }
+    //--
 }
