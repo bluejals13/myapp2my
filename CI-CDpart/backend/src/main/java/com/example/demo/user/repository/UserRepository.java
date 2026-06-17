@@ -16,4 +16,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
         "roles.permissions"
     })
     Optional<User> findWithRolesById(Long id);
+    
+    @Query("""
+            select distinct u
+            from User u
+            join u.roles r
+            join r.permissions p
+            where p.id = :permissionId
+        """)
+        List<User> findByPermissionId(Long permissionId);
 }
