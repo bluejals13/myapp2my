@@ -7,7 +7,6 @@ import com.example.demo.admin.role.domain.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,6 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User {
 
     @Id
@@ -59,10 +57,13 @@ public class User {
     }
     
     public void changeStatus(UserStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("status cannot be null");
+        }
     this.status = status;
     }
     
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name="user_id"),
