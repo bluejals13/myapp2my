@@ -80,3 +80,12 @@
   display: inline-block;
   border: 1px solid #30363d;
 }
+
+/* 세부 페널  */
+.detailPanel {
+  margin-top: 20px;
+  padding: 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+}
