@@ -52,6 +52,9 @@ public class UserAdminService {
         );
     }
     
+    //public void restoreUser(Long adminId, Long userId)
+    //public void hardDeleteUser(Long adminId, Long userId)
+    
     @Transactional
     public void changeStatus(Long adminId, Long userId, UserStatus status) {
 
