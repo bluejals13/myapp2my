@@ -3,7 +3,7 @@ import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./UserAdminPage.module.css";
 
-type UserStatus = "ACTIVE" | "SUSPENDED" | "DELETED";
+type UserStatus = "ACTIVE" | "SUSPENDED" | "DELETED";  // 삭제 역할 , // 실제 삭제 개념
 
 type User = {
   id: number;
@@ -58,8 +58,11 @@ export default function UserAdminPage() {
 
     try { setActionLoading(id);
       await apiFetch(`/api/admin/users/${id}`, { method: "DELETE" });
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch {
+      // soft delete 반영
+      setUsers((prev) => prev.map((u) =>
+        u.id === id ? { ...u, status: "SUSPENDED" } : u ) );        
+    } catch (err) {
+      console.error(err);
       alert("삭제 실패");
     } finally{ setActionLoading(null);
     }
@@ -109,7 +112,9 @@ export default function UserAdminPage() {
           {(canUpdate || canDelete) && <div>Actions</div>}
         </div>
 
-        {users.map((user) => (
+        {users
+          .filter((user) => user.status !== "DELETED")
+          .map((user) => (
           <div key={user.id} className={styles.row}>
             <div>{user.id}</div>
             <div>{user.username}</div>
