@@ -36,7 +36,7 @@ export default function App() {
           <Route element={<Layout />}>		
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/monitor" element={<Monitor />} />
-          </Route> </Route>
+        </Route> </Route>
 
         {/* Layout 있는 영역 */}
         <Route element={<Layout />}>
