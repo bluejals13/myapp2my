@@ -119,6 +119,23 @@
   box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
 }
 
+.sectionTitle {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  color: #f85149;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.pendingRow {
+  border-color: #f85149;
+}
+
+.danger {
+  background: #f85149;
+  color: white;
+}
+
 /* DELETE BUTTON (GitHub danger style) */
 .deleteBtn {
   padding: 6px 10px;
