@@ -8,6 +8,11 @@ import java.util.List;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    @Query("select r from Role r join fetch r.permissions")
-    List<Role> findAllWithPermissions();
+    @Query("""
+        select r
+        from Role r
+        join r.permissions p
+        where p.id = :permissionId
+    """)
+    List<Role> findByPermissionId(Long permissionId);
 }
