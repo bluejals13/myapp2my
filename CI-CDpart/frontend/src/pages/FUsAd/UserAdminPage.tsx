@@ -3,90 +3,127 @@ import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./UserAdminPage.module.css";
 
-type UserStatus = "ACTIVE" | "SUSPENDED" | "DELETED";  // 삭제 역할 , // 실제 삭제 개념
+
+type UserStatus = "ACTIVE" | "SUSPENDED" | "DELETE_PENDING" | "DELETED";  // 활성, 정지 , 제거 예정, 삭제
+
 
 type User = {
   id: number;
   username: string;
   permissions: string[];
-  status: UserStatus;
-};
+  status: UserStatus; };
+
 
 export default function UserAdminPage() {
   const { hasPermission, isLoading: authLoading } = useAuth();
-
+  
+  //const nextStatus = e.target.value;
+  //if ( nextStatus === "ACTIVE" || nextStatus === "SUSPENDED" ) { changeStatus(user.id, nextStatus); }
+  
   const canRead = hasPermission("USER_READ");
   const canUpdate = hasPermission("USER_UPDATE");
   const canDelete = hasPermission("USER_DELETE");
-
+  
   const [statusLoading, setStatusLoading] = useState<number | null>(null);  // 상태 변경 시 버튼 잠금
   const [actionLoading, setActionLoading] = useState<number | null>(null);  // 상태 삭제 시 버튼 잠금
   
   const [users, setUsers] = useState<User[]>([]);      // 사용자 목록 객체
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  
+  
+  const activeUsers = users.filter( (u) =>
+      u.status !== "DELETE_PENDING" &&
+      u.status !== "DELETED" );
+  
+  
+  const pendingUsers = users.filter(
+    (u) => u.status === "DELETE_PENDING" );
+  
+  
   const fetchUsers = useCallback(async () => {
-    try {
-      
-      setLoading(true);
+    try { setLoading(true);
       setError(null);
-
+         
       const data = await apiFetch<User[]>("/api/admin/users");
       setUsers(data);
-      
-    } catch {
-      setError("유저 목록을 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    } catch { setError("유저 목록을 불러오지 못했습니다.");
+    } finally { setLoading(false); } }, []);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!canRead) return;
-    fetchUsers();
-  }, [authLoading, canRead, fetchUsers]);
   
-  const normalizeStatus = (status?: string) => {    // 모르면 BLOCKED
-    if (!status || status === "UNKNOWN") return "DELETED";
-    return status;
-  };
+  
+  
+  useEffect(() => {   if (authLoading) return;
+                      if (!canRead) return; 
+                      fetchUsers(); }, 
+  [authLoading, canRead, fetchUsers]);
 
-  const deleteUser = async (id: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-
-    try { setActionLoading(id);
-      await apiFetch(`/api/admin/users/${id}`, { method: "DELETE" });
-      // soft delete 반영
-      setUsers((prev) => prev.map((u) =>
-        u.id === id ? { ...u, status: "SUSPENDED" } : u ) );        
-    } catch (err) {
-      console.error(err);
-      alert("삭제 실패");
-    } finally{ setActionLoading(null);
-    }
-  };
-
-  const changeStatus = async (id: number, status: UserStatus) => {
+  
+  
+  
+  const changeStatus = async ( id: number, status: UserStatus ) => {
     try { setStatusLoading(id);
+         
+        await apiFetch( `/api/admin/users/${id}/status`, 
+          { method: "PATCH", headers: 
+          { "Content-Type":"application/json", }, 
+          body: JSON.stringify({ status, }), } );
+         
+         
+      setUsers((prev) => prev.map((u) => u.id === id ? { ...u, status } : u ) );
+         
+    } catch { alert("상태 변경 실패");
+    } finally { setStatusLoading(null); } };
+  
+  
+  
+  const moveToDeletePending = async (id: number) => {
+    try { setActionLoading(id);
+         
       await apiFetch(`/api/admin/users/${id}/status`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ status: "DELETE_PENDING", }), });
 
-      setUsers((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, status } : u))
-      );
-    } catch {
-      alert("상태 변경 실패");
-    } finally { setStatusLoading(null);
-    }
-  };
+         
+      setUsers(prev => prev.map(u => u.id === id ? 
+      { ...u, status: "DELETE_PENDING" } : u ) );
+    } catch { alert("삭제 대기 처리 실패"); 
+    } finally { setActionLoading(null); } };
 
+
+  
+  const restoreUser = async ( id: number ) => {
+    try { setActionLoading(id);
+
+      await apiFetch( `/api/admin/users/${id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({
+          status: "ACTIVE", }), } );
+      
+      setUsers((prev) => prev.map((u) => u.id === id ? { ...u, status: "ACTIVE", } : u ));
+         
+    } catch { alert("복구 실패");
+    } finally { setActionLoading(null); } };
+  
+  
+  
+  const hardDeleteUser = async ( id: number ) => {
+    const ok = confirm( "정말 영구 삭제하시겠습니까?\n복구할 수 없습니다." );
+    if (!ok) return;
+    try { setActionLoading(id);
+
+      await apiFetch( `/api/admin/users/${id}`, { method: "DELETE", } );
+
+      setUsers((prev) => prev.filter( (u) => u.id !== id ) );
+      
+    } catch { alert("삭제 실패");
+    } finally { setActionLoading(null); } };
+  
+  
+  
+  
   if (authLoading || loading) {
     return <div className={styles.loading}>로딩 중...</div>;
   }
@@ -102,26 +139,27 @@ export default function UserAdminPage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>User Admin</h1>
-
+      
+      {/* 일반 사용자 */}
       <div className={styles.table}>
         <div className={styles.header}>
           <div>ID</div>
           <div>Username</div>
           <div>Status</div>
           <div>Permissions</div>
+          
           {(canUpdate || canDelete) && <div>Actions</div>}
         </div>
 
-        {users
-          .filter((user) => user.status !== "DELETED")
-          .map((user) => (
+        {activeUsers.map((user) => (
           <div key={user.id} className={styles.row}>
+            
             <div>{user.id}</div>
             <div>{user.username}</div>
 
             <div>
-              <span className={`${styles.status} ${styles[normalizeStatus(user.status).toLowerCase()]}`}>
-                {normalizeStatus(user.status)}
+              <span className={`${styles.status} ${styles[user.status.toLowerCase() ] }`} >
+                {user.status}
               </span>
             </div>
 
@@ -135,23 +173,20 @@ export default function UserAdminPage() {
                   <select
                     value={user.status}
                     disabled={statusLoading === user.id}
-                    onChange={(e) =>
-                      changeStatus(user.id, e.target.value as UserStatus)
-                    }
+                    onChange={(e) => changeStatus(user.id, e.target.value as UserStatus) }
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="SUSPENDED">SUSPENDED</option>
-                    <option value="DELETED">DELETED</option>
                   </select>
                 )}
 
                 {canDelete && (
                   <button
                     className={styles.deleteBtn}
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() => moveToDeletePending(user.id)}
                     disabled={actionLoading === user.id}
                   >
-                    Delete
+                    삭제대기
                   </button>
                 )}
               </div>
@@ -159,6 +194,62 @@ export default function UserAdminPage() {
           </div>
         ))}
       </div>
+      
+      
+      {/* 삭제 대기 */}
+      {pendingUsers.length > 0 && (
+      <>
+      <h2 className={ styles.sectionTitle } >
+        삭제 대기 목록
+      </h2>
+      
+
+      <div className={styles.table}>
+        <div className={styles.header}>
+          <div>ID</div>
+          <div>Username</div>
+          <div>Status</div>
+          <div>Permissions</div>
+          <div>Actions</div>
+        </div>
+        
+        
+        {pendingUsers.map((user) => ( 
+        <div  key={user.id}
+            className={`${styles.row} ${styles.pendingRow}`}
+          >
+          
+            <div>{user.id}</div>
+            <div>{user.username}</div>
+          
+            <div> <span className={ styles.status } 
+              > DELETE_PENDING </span>
+            </div>
+          
+          
+            <div className={ styles.permissions } >
+              {user.permissions?.join( ", " ) || "-"}
+            </div>
+          
+          
+            <div className={ styles.actions } >
+              <button disabled={ actionLoading === user.id }
+                onClick={() => restoreUser( user.id ) }
+              > 복구
+              </button>
+
+              <button className={ styles.danger }
+                disabled={ actionLoading === user.id }
+                onClick={() => hardDeleteUser( user.id ) }
+              > 영구삭제
+              </button>
+            </div>
+          
+          </div>
+          
+        ))}
+      </div>
+      </>
     </div>
   );
 }
