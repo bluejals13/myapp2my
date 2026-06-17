@@ -41,11 +41,16 @@ export default function App() {
         {/* Layout 있는 영역 */}
         <Route element={<Layout />}>
           <Route path="/" element={<Main />} />
-
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/permission" element={<PermissionPage />} />
-          <Route path="/user" element={<UserAdminPage />} />
-
+          
+          <Route element={<ProtectedRoute />}>            
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/permission" element={<PermissionPage />} />
+          </Route>
+          
+          <Route element={<ProtectedRoute permission="USER_READ" />}>
+            <Route path="/user" element={<UserAdminPage />} />
+          </Route>
+          
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/home" element={<Home />} />
