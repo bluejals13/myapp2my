@@ -3,7 +3,7 @@ import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./UserAdminPage.module.css";
 
-type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
+type UserStatus = "ACTIVE" | "SUSPENDED" | "DELETED";
 
 type User = {
   id: number;
@@ -49,7 +49,7 @@ export default function UserAdminPage() {
   }, [authLoading, canRead, fetchUsers]);
   
   const normalizeStatus = (status?: string) => {    // 모르면 BLOCKED
-    if (!status || status === "UNKNOWN") return "BLOCKED";
+    if (!status || status === "UNKNOWN") return "DELETED";
     return status;
   };
 
@@ -135,8 +135,8 @@ export default function UserAdminPage() {
                     }
                   >
                     <option value="ACTIVE">ACTIVE</option>
-                    <option value="INACTIVE">INACTIVE</option>
-                    <option value="BLOCKED">BLOCKED</option>
+                    <option value="SUSPENDED">SUSPENDED</option>
+                    <option value="DELETED">DELETED</option>
                   </select>
                 )}
 
