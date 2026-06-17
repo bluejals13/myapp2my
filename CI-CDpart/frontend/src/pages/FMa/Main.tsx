@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import "./Main.css";
 
 export default function Main() {
   const navigate = useNavigate();
-
+  const { hasPermission } = useAuth();
   return (
     <div className="main">
 
@@ -15,26 +16,26 @@ export default function Main() {
 
       {/* NAV GRID */}
       <section className="grid">
-
+        {hasPermission("MENU_READ") && (
         <div className="card" onClick={() => navigate("/menu")}>
           <h2>📦 Menu</h2>
           <p>메뉴 관리 페이지</p>
-        </div>
-
+        </div> )}
+        {hasPermission("PERMISSION_READ") && (
         <div className="card" onClick={() => navigate("/permission")}>
           <h2>🔐 Permission</h2>
           <p>권한 관리 페이지</p>
-        </div>
-
+        </div> )}
+        {hasPermission("USER_READ") && (
         <div className="card" onClick={() => navigate("/user")}>
           <h2>👤 User Admin</h2>
           <p>유저 관리 페이지</p>
-        </div>
-
+        </div> )}
+        
         <div className="card debug" onClick={() => navigate("/about")}>
           <h2>🧪 Debug</h2>
           <p>RBAC / Auth 확인</p>
-        </div>
+        </div> 
 
       </section>
 
