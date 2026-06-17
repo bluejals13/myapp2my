@@ -3,12 +3,12 @@ import { apiFetch } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import styles from "./permission.module.css";
 
-type Role = {
+type RoleDto = {
   id: number;
   name: string;
 };
 
-type User = {
+type UserDto = {
   id: number;
   username: string;
 };
@@ -16,9 +16,9 @@ type User = {
 type PermissionDetail = {
   id: number;
   name: string;
-  description: string;
-  roles: Role[];
-  users: User[];
+  description: string | null;
+  roles: RoleDto[];
+  users: UserDto[];
 };
 
 type Permission = {
