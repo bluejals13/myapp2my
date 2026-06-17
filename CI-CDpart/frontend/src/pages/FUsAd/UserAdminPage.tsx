@@ -67,7 +67,7 @@ export default function UserAdminPage() {
 
   const changeStatus = async (id: number, status: UserStatus) => {
     try { setStatusLoading(id);
-      await apiFetch(`/admin/users/${id}/status`, {
+      await apiFetch(`/api/admin/users/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
