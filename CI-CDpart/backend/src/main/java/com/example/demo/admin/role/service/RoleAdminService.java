@@ -24,7 +24,7 @@ public class RoleAdminService {
 
     private final RoleRepository roleRepository;
 
-    public List<RoleResponse> getRoles() {
+    public List<RoleResponse> getRoles() {            // 순수 롤 조회 용
         return roleRepository.findAllWithPermissions()
                 .stream()
                 .map(role -> RoleResponse.builder()
