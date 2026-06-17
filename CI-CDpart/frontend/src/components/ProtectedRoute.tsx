@@ -15,7 +15,7 @@ export default function ProtectedRoute( {	// 깜박거리는 거 로딩화면으
   }
   
   if (permission && !hasPermission(permission)) {
-    return <Forbidden403 />;
+    return <Navigate to="/" replace />;
   }
   
   return <Outlet />;
