@@ -52,10 +52,14 @@ export default function PermissionPage() {
   };
   
   const fetchPermissionDetail = async (id: number) => {
-    const data = await apiFetch<PermissionDetail>(
-      `/api/admin/permissions/${id}`
-    );
-    setSelectedPermission(data);
+    try {
+      const data = await apiFetch<PermissionDetail>(
+        `/api/admin/permissions/${id}`
+      );
+      setSelectedPermission(data);
+        } catch (e) {
+      console.error(e);
+    }
   };
   
 
